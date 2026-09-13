@@ -11,6 +11,7 @@ Ubuntu.
 
 - Pendaftaran, login, panel akun, ranking, berita, dan unduhan pemain
 - Pengelolaan akun dan GM oleh admin
+- Dashboard admin responsif dengan sidebar dan kartu status bernuansa PW
 - Antrean cash Boutique dan sinkronisasi karakter
 - Monitoring layanan inti dan kontrol map
 - Integrasi ASP CPW Patch Manager

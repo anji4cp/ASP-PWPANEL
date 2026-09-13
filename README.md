@@ -10,6 +10,7 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
 
 - Player registration, sign-in, account panel, rankings, news, and downloads
 - Admin account and GM management
+- Responsive admin dashboard with sidebar navigation and PW-themed status cards
 - Boutique cash queue and character synchronization
 - Core service monitoring and map controls
 - ASP CPW Patch Manager integration

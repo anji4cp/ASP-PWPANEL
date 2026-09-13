@@ -35,20 +35,11 @@ async function refreshStatus() {
 refreshStatus();
 setInterval(refreshStatus, 30000);
 
-document.querySelectorAll('[data-category-editor]').forEach((form) => {
-  const category = form.querySelector('[data-category-select]');
-  const subcategory = form.querySelector('[data-subcategory-select]');
-  if (!category || !subcategory) return;
-  let categories;
-  try { categories = JSON.parse(form.dataset.categories || '[]'); }
-  catch (_) { return; }
-  category.addEventListener('change', () => {
-    const values = categories[Number(category.value)]?.subcategories || [];
-    subcategory.replaceChildren(...values.map((label, index) => {
-      const option = document.createElement('option');
-      option.value = String(index);
-      option.textContent = label || `Subkategori ${index + 1}`;
-      return option;
-    }));
+const adminNavToggle = document.querySelector('#admin-nav-toggle');
+document.querySelectorAll('.admin-nav a').forEach((link) => {
+  link.addEventListener('click', () => {
+    if (adminNavToggle) adminNavToggle.checked = false;
+    document.querySelectorAll('.admin-nav a').forEach((item) => item.classList.remove('active'));
+    link.classList.add('active');
   });
 });
