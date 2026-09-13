@@ -11,6 +11,9 @@ class ProductSeparationTests(unittest.TestCase):
         self.assertNotIn("/opt/asp-cpw", installer)
         self.assertNotIn("install-asp-cpw", installer)
         self.assertIn("pw155-web.service", installer)
+        self.assertIn("groupadd --system aspcpw", installer)
+        self.assertIn("-/var/lib/asp-cpw-control/requests", installer)
+        self.assertIn("install -d -o root -g aspcpw -m 0770", installer)
 
     def test_desktop_launcher_and_installer_are_present(self):
         self.assertTrue((ROOT / "ASP-PWPANEL-DESKTOP.cmd").is_file())

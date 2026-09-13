@@ -49,7 +49,18 @@ fi
 if ! getent group pwgamectl >/dev/null 2>&1; then
   groupadd --system pwgamectl
 fi
-usermod -a -G pwmonitor,pwmap,pwbackup,pwgamectl pwweb
+if ! getent group aspcpw >/dev/null 2>&1; then
+  groupadd --system aspcpw
+fi
+usermod -a -G pwmonitor,pwmap,pwbackup,pwgamectl,aspcpw pwweb
+
+# ASP CPW remains optional. If it is already installed, repair its shared
+# request queue so PWPanel can enqueue only allowlisted JSON operations.
+if [[ -d /var/lib/asp-cpw-control ]]; then
+  chown root:aspcpw /var/lib/asp-cpw-control
+  chmod 0750 /var/lib/asp-cpw-control
+  install -d -o root -g aspcpw -m 0770 /var/lib/asp-cpw-control/requests
+fi
 
 install -d -o root -g root -m 0755 "$install_dir" "$install_dir/static" "$install_dir/downloads"
 install -d -o root -g pwweb -m 0750 "$config_dir"
@@ -436,7 +447,7 @@ Requires=mariadb.service
 Type=simple
 User=pwweb
 Group=pwweb
-SupplementaryGroups=pwmonitor pwmap pwbackup pwgamectl
+SupplementaryGroups=pwmonitor pwmap pwbackup pwgamectl aspcpw
 WorkingDirectory=/opt/pw155-web
 EnvironmentFile=/etc/pw155-web/web.env
 Environment=PW155_WEB_DB_CONFIG=/etc/pw155-web/db.cnf
@@ -454,7 +465,7 @@ ProtectHome=true
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true
-ReadWritePaths=/var/lib/pw155-map-control/requests /var/lib/pw155-backup-control/requests /var/lib/pw155-game-control/requests
+ReadWritePaths=/var/lib/pw155-map-control/requests /var/lib/pw155-backup-control/requests /var/lib/pw155-game-control/requests -/var/lib/asp-cpw-control/requests
 RestrictSUIDSGID=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 LockPersonality=true
