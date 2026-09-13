@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Player Panel — PW155</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body class="panel-page">
+  <div class="sky" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">PW</span>
+      <span><strong>PW155</strong><small>PLAYER PANEL</small></span>
+    </a>
+    <div class="top-actions">
+      {{ADMIN_LINK}}
+      <div class="realm-state" id="realm-state">
+        <span class="state-dot"></span><span>Memeriksa server…</span>
+      </div>
+      <form method="post" action="/logout" class="inline-form">
+        <input type="hidden" name="csrf" value="{{CSRF}}">
+        <button type="submit" class="text-button">Logout</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="panel-shell">
+    {{NOTICE}}
+    <section class="panel-hero">
+      <div>
+        <span class="section-kicker">PLAYER PROFILE</span>
+        <h1>Halo, <em>{{USERNAME}}</em></h1>
+      </div>
+      <div class="account-badge"><small>ACCOUNT ID</small><strong>#{{ACCOUNT_ID}}</strong></div>
+    </section>
+
+    <section class="account-stats">
+      <article><small>Akun dibuat</small><strong>{{CREATED_AT}}</strong></article>
+      <article><small>Login game terakhir</small><strong>{{LAST_GAME_LOGIN}}</strong></article>
+      <article><small>Jumlah karakter</small><strong>{{CHARACTER_COUNT}}</strong></article>
+      <article><small>Status realm</small><strong class="status-text">Memeriksa</strong></article>
+    </section>
+
+    <section class="panel-block">
+      <div class="section-heading">
+        <div><span class="section-kicker">ROSTER</span><h2>Karakter</h2></div>
+        {{CHARACTER_NOTE}}
+      </div>
+      <div class="character-grid">{{CHARACTERS}}</div>
+    </section>
+
+    <section class="panel-block security-grid">
+      <div>
+        <span class="section-kicker">ACCOUNT SECURITY</span>
+        <h2>Ganti sandi</h2>
+        <p>Perubahan berlaku sekaligus untuk player panel dan login client.</p>
+      </div>
+      <form method="post" action="/change-password" class="password-form">
+        <input type="hidden" name="csrf" value="{{CSRF}}">
+        <label>Sandi saat ini
+          <input type="password" name="current_password" minlength="6" maxlength="32"
+                 autocomplete="current-password" required>
+        </label>
+        <label>Sandi baru
+          <input type="password" name="new_password" minlength="6" maxlength="32"
+                 pattern="[A-Za-z0-9_.-]+" autocomplete="new-password" required>
+        </label>
+        <label>Konfirmasi sandi baru
+          <input type="password" name="confirmation" minlength="6" maxlength="32"
+                 pattern="[A-Za-z0-9_.-]+" autocomplete="new-password" required>
+        </label>
+        <button type="submit">Perbarui sandi</button>
+      </form>
+    </section>
+  </main>
+  <footer><span>PW155 Player Panel</span><span>Local Development Realm</span></footer>
+</body>
+</html>

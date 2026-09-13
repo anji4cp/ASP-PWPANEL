@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portal lokal Perfect World 1.5.5">
+  <title>PW155 — Portal Pemain</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="PW155 beranda">
+      <span class="brand-mark">PW</span>
+      <span><strong>PW155</strong><small>LOCAL REALM</small></span>
+    </a>
+    <div class="top-actions">
+      <a class="text-link" href="/news">Berita</a>
+      <a class="text-link" href="/guide">Panduan</a>
+      <a class="text-link" href="/downloads">Download</a>
+      <a class="text-link" href="/ranking">Ranking</a>
+      <a class="text-link" href="/login">Player login</a>
+      <div class="realm-state" id="realm-state">
+        <span class="state-dot"></span><span>Memeriksa server…</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">PERFECT WORLD 1.5.5</div>
+      <h1>Dunia lama,<br><em>petualangan baru.</em></h1>
+      <p>Portal pengembangan lokal untuk membuat akun dan memantau realm PW155.</p>
+      <a class="ghost-button" href="#register">Buat akun <span>↓</span></a>
+    </section>
+
+    <section class="status-panel" aria-labelledby="status-title">
+      <div>
+        <span class="section-kicker">REALM MONITOR</span>
+        <h2 id="status-title">Status server</h2>
+      </div>
+      <div class="status-grid" id="status-grid">
+        <div class="service"><span>Login</span><b>Memeriksa</b></div>
+        <div class="service"><span>Auth</span><b>Memeriksa</b></div>
+        <div class="service"><span>Database</span><b>Memeriksa</b></div>
+        <div class="service"><span>GameDB</span><b>Memeriksa</b></div>
+      </div>
+    </section>
+
+    <section class="register" id="register">
+      <div class="register-copy">
+        <span class="section-kicker">MULAI BERMAIN</span>
+        <h2>Buat akun game</h2>
+        <p>Akun ini digunakan langsung pada halaman login client PW155.</p>
+        <ul>
+          <li>Username 3–20 karakter</li>
+          <li>Sandi 6–32 karakter</li>
+          <li>Huruf, angka, underscore, titik, atau tanda hubung</li>
+        </ul>
+      </div>
+      <form method="post" action="/register" autocomplete="off">
+        {{NOTICE}}
+        <input type="hidden" name="csrf" value="{{CSRF}}">
+        <label>Username
+          <input name="username" value="{{USERNAME}}" minlength="3" maxlength="20"
+                 pattern="[A-Za-z0-9_]+" autocomplete="username" required>
+        </label>
+        <label>Sandi
+          <input type="password" name="password" minlength="6" maxlength="32"
+                 pattern="[A-Za-z0-9_.-]+" autocomplete="new-password" required>
+        </label>
+        <label>Konfirmasi sandi
+          <input type="password" name="confirmation" minlength="6" maxlength="32"
+                 pattern="[A-Za-z0-9_.-]+" autocomplete="new-password" required>
+        </label>
+        <button type="submit">Buat akun</button>
+        <small>Portal ini hanya tersedia pada komputer pengembangan lokal.</small>
+      </form>
+    </section>
+  </main>
+
+  <footer><span>PW155 Development Realm</span><span>Build 1.5.5</span></footer>
+</body>
+</html>

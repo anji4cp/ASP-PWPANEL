@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ranking karakter PW155">
+  <title>Ranking Karakter — PW155</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body class="panel-page ranking-page">
+  <div class="sky" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">PW</span>
+      <span><strong>PW155</strong><small>HALL OF HEROES</small></span>
+    </a>
+    <div class="top-actions">
+      <a class="text-link" href="/">Portal</a>
+      <a class="text-link" href="/guide">Panduan</a>
+      <a class="text-link" href="/downloads">Download</a>
+      <a class="text-link" href="/login">Player login</a>
+      <div class="realm-state" id="realm-state">
+        <span class="state-dot"></span><span>Memeriksa server…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="panel-shell ranking-shell">
+    <section class="ranking-hero">
+      <span class="section-kicker">HALL OF HEROES</span>
+      <h1>Ranking<br><em>karakter.</em></h1>
+      <p>Daftar berdasarkan level tertinggi. Data berasal dari cache read-only dan diperbarui setiap lima menit.</p>
+      <span class="ranking-count">{{CHARACTER_COUNT}} karakter tercatat</span>
+    </section>
+
+    <section class="podium-grid">{{PODIUM}}</section>
+
+    <section class="panel-block ranking-block">
+      <div class="section-heading">
+        <div><span class="section-kicker">LEVEL LEADERBOARD</span><h2>Top 100</h2></div>
+        <span class="cache-state">Cache read-only</span>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table ranking-table">
+          <thead><tr><th>Rank</th><th>Karakter</th><th>Class</th><th>Level</th><th>Faction</th></tr></thead>
+          <tbody>{{RANKING_ROWS}}</tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer><span>PW155 Hall of Heroes</span><span>Diperbarui setiap lima menit</span></footer>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Player Login — PW155</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-page">
+  <div class="sky" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">PW</span>
+      <span><strong>PW155</strong><small>PLAYER PANEL</small></span>
+    </a>
+    <a class="text-link" href="/">Kembali ke portal</a>
+  </header>
+  <main class="auth-shell">
+    <section class="auth-copy">
+      <span class="section-kicker">PLAYER ACCESS</span>
+      <h1>Selamat<br><em>datang kembali.</em></h1>
+      <p>Gunakan username dan sandi yang sama dengan client. Saat login pertama,
+         akun lama otomatis memperoleh identitas web dengan hash modern.</p>
+    </section>
+    <form method="post" action="/login" class="auth-card">
+      <div>
+        <span class="section-kicker">LOGIN</span>
+        <h2>Masuk ke panel</h2>
+      </div>
+      {{NOTICE}}
+      <input type="hidden" name="csrf" value="{{CSRF}}">
+      <label>Username
+        <input name="username" value="{{USERNAME}}" minlength="3" maxlength="20"
+               pattern="[A-Za-z0-9_]+" autocomplete="username" required autofocus>
+      </label>
+      <label>Sandi
+        <input type="password" name="password" minlength="6" maxlength="32"
+               pattern="[A-Za-z0-9_.-]+" autocomplete="current-password" required>
+      </label>
+      <button type="submit">Masuk</button>
+      <small>Belum punya akun? <a href="/#register">Daftar di portal</a></small>
+    </form>
+  </main>
+</body>
+</html>

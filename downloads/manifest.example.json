@@ -1,0 +1,14 @@
+{
+  "downloads": [
+    {
+      "id": "connection-pack",
+      "title": "Your PW 1.5.5 Connection Pack",
+      "version": "1.0.0",
+      "filename": "connection-pack.zip",
+      "bytes": 0,
+      "sha256": "REPLACE_WITH_SHA256",
+      "available": false,
+      "description": "Provide your own legally distributable package and set available to true."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.cnf
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Runtime state, logs, and backups
+runtime/
+backups/
+*.log
+*.pid
+
+# Perfect World / third-party game data is not distributed by this repository
+*.data
+*.pck
+*.sev
+PW_1.5.5_v156.cfg
+
+# Generated downloads and ASP CPW patch payloads
+downloads/CPW/
+downloads/manifest.json
+downloads/*.zip
+downloads/*.7z
+downloads/*.rar
+downloads/*.tar
+downloads/*.tar.gz
+downloads/*.exe
+
+# Local editor files
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store
