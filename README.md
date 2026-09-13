@@ -12,7 +12,6 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
 - Admin account and GM management
 - Boutique cash queue and character synchronization
 - Core service monitoring and map controls
-- Draft-based Boutique, NPC spawn, equipment, merchant, and recipe editors
 - ASP CPW Patch Manager integration
 - Admin-triggered database backups with protected download access
 
@@ -39,9 +38,8 @@ No third-party Python packages are required.
 1. Clone the repository.
 2. Copy `.env.example` values into your shell or service environment.
 3. Create `/etc/pw155-web/db.cnf` with a least-privileged MariaDB account.
-4. Provide the required game data paths through the `PW155_*` variables.
-5. Generate a unique CSRF secret of at least 32 characters.
-6. Run the panel:
+4. Generate a unique CSRF secret of at least 32 characters.
+5. Run the panel:
 
 ```bash
 export PW155_WEB_CSRF_SECRET="replace-this-with-a-unique-random-secret"
@@ -49,8 +47,10 @@ export PW155_WEB_DB_CONFIG="/etc/pw155-web/db.cnf"
 python3 app.py
 ```
 
-Open `http://127.0.0.1:8080`. Pages that query accounts or game data require a
-configured database and compatible files.
+Open `http://127.0.0.1:8080`. Account pages require a configured database.
+
+Game-data editing is intentionally not part of ASP PWPanel. Use a dedicated
+desktop editor for items, NPCs, monsters, spawns, merchants, and recipes.
 
 For production, run the panel as an unprivileged `systemd` service behind an
 HTTPS reverse proxy. Do not expose Python's built-in HTTP server directly to
@@ -94,8 +94,8 @@ files, game data, and generated manifests are ignored by Git.
 python3 -m unittest discover -s tests -v
 ```
 
-Tests that need proprietary PW data are skipped automatically when the local
-fixtures are absent; source-only security and worker tests still run.
+The suite covers input validation, authorization, CSRF/session handling,
+service control queues, patch access, monitoring, and backup workers.
 
 ## License
 

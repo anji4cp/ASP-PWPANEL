@@ -1,6 +1,6 @@
 import importlib.util
+import inspect
 import os
-import shutil
 import sys
 import tempfile
 import unittest
@@ -215,129 +215,15 @@ class ValidationTests(unittest.TestCase):
                 app.queue_map_action((1024, "admin"), "start-core", ["gs01"],
                                      "127.0.0.1")
 
-    def test_data_editor_template(self):
-        catalog = {
-            "total": 2004,
-            "category_count": 8,
-            "rows": [{
-                "index": 3, "place": 3, "item_id": 15038,
-                "name": "Dragon Orb (1 Star)", "amount": 1,
-                "category": "Utility", "subcategory": "Refining",
-                "price_cash": 100, "sale_count": 1,
-            }],
-        }
-        body, token = app.render_data_editor((1024, "admin"), catalog, "dragon")
-        self.assertIn("Game Data Workshop", body)
-        self.assertIn("Dragon Orb (1 Star)", body)
-        self.assertIn("2004", body)
-        self.assertNotIn("{{", body)
-        self.assertTrue(app.valid_csrf_token(token))
-
-    def test_boutique_draft_edit_and_clone_preserve_active_files(self):
-        project = APP_PATH.parents[1]
-        client_source = project / "vendor/Perfect_World_Server_1.5.5/gamed/config/gshop.data"
-        server_source = project / "vendor/Perfect_World_Server_1.5.5/gamed/config/gshopsev.data"
-        if not client_source.is_file() or not server_source.is_file():
-            self.skipTest("optional proprietary PW gshop fixtures are not installed")
-        with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
-            client_dir = root / "client"
-            editor_dir = root / "editor"
-            client_dir.mkdir()
-            shutil.copy2(client_source, client_dir / "gshop.data")
-            shutil.copy2(server_source, client_dir / "gshopsev.data")
-            active_client = (client_dir / "gshop.data").read_bytes()
-            active_server = (client_dir / "gshopsev.data").read_bytes()
-            fields = {
-                "item_id": ["42203"], "amount": ["2"],
-                "category": ["0"], "subcategory": ["0"],
-                "price_cash": ["123"], "name": ["Test Boutique Item"],
-                "description": ["Draft test"], "icon": ["Surfaces\\test.dds"],
-            }
-            with patch.object(app, "CLIENT_DATA_DIR", client_dir), \
-                    patch.object(app, "DATA_EDITOR_DIR", editor_dir):
-                edited = app.build_boutique_draft((1024, "admin"), 0, fields)
-                self.assertEqual("edit", edited["operation"])
-                cloned = app.build_boutique_draft((1024, "admin"), 0, fields, clone=True)
-                self.assertEqual("clone", cloned["operation"])
-                self.assertEqual(2005, cloned["record_count"])
-            self.assertEqual(active_client, (client_dir / "gshop.data").read_bytes())
-            self.assertEqual(active_server, (client_dir / "gshopsev.data").read_bytes())
-
-    def test_npc_draft_edit_and_clone_preserve_active_file(self):
-        project = APP_PATH.parents[1]
-        source = project / "runtime/fortune-treasure-v3/a61/npcgen.data"
-        if not source.is_file():
-            self.skipTest("optional proprietary PW npcgen fixture is not installed")
-        with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
-            active = root / "npcgen.data"
-            editor_dir = root / "editor"
-            shutil.copy2(source, active)
-            original = active.read_bytes()
-            fields = {
-                "npc_id": ["48055"], "amount": ["2"], "respawn": ["30"],
-                "trigger_id": ["0"], "x": ["100.5"], "y": ["20"], "z": ["300.25"],
-            }
-            with patch.object(app, "NPCGEN_PATH", active), \
-                    patch.object(app, "DATA_EDITOR_DIR", editor_dir):
-                manifest = app.build_npc_draft((1024, "admin"), 295, 0, fields)
-                self.assertEqual("edit", manifest["operation"])
-                cloned = app.build_npc_draft((1024, "admin"), 295, 0, fields, clone=True)
-                self.assertEqual("clone", cloned["operation"])
-                self.assertEqual(manifest["group_count"] + 1, cloned["group_count"])
-            self.assertEqual(original, active.read_bytes())
-
-    def test_equipment_draft_edit_preserves_active_file(self):
-        project = APP_PATH.parents[1]
-        source = project / "runtime/fortune-treasure-v2/elements.data"
-        config = project / "tools/1.5.x/sELedit++/configs/PW_1.5.5_v156.cfg"
-        if not source.is_file() or not config.is_file():
-            self.skipTest("optional proprietary PW elements fixtures are not installed")
-        with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
-            active = root / "elements.data"
-            editor_dir = root / "editor"
-            shutil.copy2(source, active)
-            original_hash = app._sha256_file(active)
-            with patch.object(app, "ELEMENTS_PATH", active), \
-                    patch.object(app, "ELEMENTS_CONFIG_PATH", config), \
-                    patch.object(app, "DATA_EDITOR_DIR", editor_dir):
-                _, item_list, row = app.equipment_item("weapon", 0)
-                fields = {field: [app._equipment_value(item_list, row, field)]
-                          for field in app.EQUIPMENT_COMMON_FIELDS}
-                for field, _ in app.EQUIPMENT_TYPES["weapon"]["stats"]:
-                    fields[field] = [app._equipment_value(item_list, row, field)]
-                fields["Name"] = ["Test Weapon Draft"]
-                manifest = app.build_equipment_draft((1024, "admin"), "weapon", 0, fields)
-                self.assertEqual("edit", manifest["operation"])
-                self.assertTrue((editor_dir / "elements/draft/elements.data").is_file())
-            self.assertEqual(original_hash, app._sha256_file(active))
-
-    def test_merchant_service_draft_chains_without_touching_active(self):
-        project = APP_PATH.parents[1]
-        source = project / "runtime/fortune-treasure-v2/elements.data"
-        config = project / "tools/1.5.x/sELedit++/configs/PW_1.5.5_v156.cfg"
-        if not source.is_file() or not config.is_file():
-            self.skipTest("optional proprietary PW elements fixtures are not installed")
-        with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
-            active = root / "elements.data"
-            editor_dir = root / "editor"
-            shutil.copy2(source, active)
-            original_hash = app._sha256_file(active)
-            with patch.object(app, "ELEMENTS_PATH", active), \
-                    patch.object(app, "ELEMENTS_CONFIG_PATH", config), \
-                    patch.object(app, "DATA_EDITOR_DIR", editor_dir):
-                detail = app.npc_service_detail(2165)
-                first = detail["merchant"][0]
-                app.build_merchant_service_draft((1024, "admin"), 2165,
-                                                 first["page"], first["slot"],
-                                                 first["id"], first["price"] + 1)
-                changed = app.npc_service_detail(2165)["merchant"][0]
-                self.assertEqual(first["price"] + 1, changed["price"])
-                self.assertTrue(app.service_draft_manifest())
-            self.assertEqual(original_hash, app._sha256_file(active))
+    def test_game_data_editor_routes_and_templates_are_removed(self):
+        self.assertNotIn('/admin/data', inspect.getsource(app.PWHandler.do_GET))
+        self.assertNotIn('/admin/data', inspect.getsource(app.PWHandler.do_POST))
+        for name in (
+                "data_editor.html", "boutique_editor.html", "npc_editor.html",
+                "npc_spawn_editor.html", "equipment_editor.html",
+                "equipment_item_editor.html", "npc_service_catalog.html",
+                "npc_service_detail.html", "npc_recipe_editor.html"):
+            self.assertFalse((APP_PATH.parent / name).exists())
 
     def test_admin_search_rejects_sql_metacharacters(self):
         with patch.object(app, "run_db") as query:

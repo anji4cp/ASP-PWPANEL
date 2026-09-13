@@ -13,7 +13,6 @@ Ubuntu.
 - Pengelolaan akun dan GM oleh admin
 - Antrean cash Boutique dan sinkronisasi karakter
 - Monitoring layanan inti dan kontrol map
-- Editor berbasis draft untuk Boutique, spawn NPC, equipment, merchant, dan resep
 - Integrasi ASP CPW Patch Manager
 - Backup database manual oleh admin dengan akses unduhan yang dilindungi
 
@@ -39,9 +38,8 @@ Tidak ada paket Python pihak ketiga yang perlu dipasang.
 1. Clone repositori.
 2. Salin nilai dari `.env.example` ke environment shell atau service.
 3. Buat `/etc/pw155-web/db.cnf` berisi akun MariaDB dengan hak akses terbatas.
-4. Arahkan variabel `PW155_*` ke data game yang kompatibel.
-5. Buat CSRF secret unik minimal 32 karakter.
-6. Jalankan panel:
+4. Buat CSRF secret unik minimal 32 karakter.
+5. Jalankan panel:
 
 ```bash
 export PW155_WEB_CSRF_SECRET="ganti-dengan-secret-acak-yang-unik"
@@ -49,8 +47,11 @@ export PW155_WEB_DB_CONFIG="/etc/pw155-web/db.cnf"
 python3 app.py
 ```
 
-Buka `http://127.0.0.1:8080`. Halaman akun dan editor data membutuhkan database
-serta file game yang sesuai.
+Buka `http://127.0.0.1:8080`. Halaman akun membutuhkan database yang sudah
+dikonfigurasi.
+
+Pengeditan data game sengaja tidak disertakan dalam ASP PWPanel. Gunakan editor
+desktop khusus untuk item, NPC, monster, spawn, merchant, dan recipe.
 
 Untuk produksi, jalankan panel sebagai service `systemd` tanpa hak root dan
 letakkan di belakang reverse proxy HTTPS. Jangan membuka HTTP server bawaan
@@ -96,8 +97,8 @@ masukkan hanya paket yang memang boleh Anda distribusikan. Folder
 python3 -m unittest discover -s tests -v
 ```
 
-Test yang memerlukan data PW berlisensi akan dilewati otomatis jika fixture
-lokal tidak tersedia. Test keamanan source dan worker tetap dijalankan.
+Rangkaian test mencakup validasi input, otorisasi, CSRF/session, antrean kontrol
+layanan, akses patch, monitoring, dan worker backup.
 
 ## Lisensi
 
