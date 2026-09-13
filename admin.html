@@ -22,6 +22,7 @@
         <span class="admin-nav-label">Management</span>
         <a href="#accounts"><span class="nav-icon">♙</span>Account &amp; GM</a>
         <a href="#boutique"><span class="nav-icon">◆</span>Boutique Gold</a>
+        <a href="#coin-orders"><span class="nav-icon">◉</span>Coin Orders</a>
         <a href="#news"><span class="nav-icon">▤</span>News</a>
         <a href="#database-backups"><span class="nav-icon">▣</span>Database Backup</a>
         <span class="admin-nav-label">System</span>
@@ -102,6 +103,12 @@
             <form method="post" action="/admin/news/save" class="news-editor" id="news-editor"><input type="hidden" name="csrf" value="{{CSRF}}"><input type="hidden" name="news_id" value="{{NEWS_ID}}"><h3>{{NEWS_EDITOR_TITLE}}</h3><label>Judul<input name="title" value="{{NEWS_TITLE}}" minlength="5" maxlength="100" required></label><label>Isi berita<textarea name="body" minlength="20" maxlength="800" rows="8" required>{{NEWS_BODY}}</textarea></label><label class="check-label"><input type="checkbox" name="published" value="1"{{NEWS_PUBLISHED}}>Terbitkan sekarang</label><button type="submit">Simpan Berita</button></form>
             <div class="table-wrap news-table-wrap"><table class="admin-table news-table"><thead><tr><th>Berita</th><th>Status</th><th>Diperbarui</th><th>Aksi</th></tr></thead><tbody>{{NEWS_ROWS}}</tbody></table></div>
           </div>
+        </section>
+
+        <section class="admin-card" id="coin-orders">
+          <div class="admin-card-header"><div><span class="section-kicker">PLAYER TRANSACTIONS</span><h2>Coin Purchase Orders</h2><p>Verifikasi pembayaran, pastikan akun sudah logout, lalu kirim coin melalui GameDB.</p></div><span class="admin-tag">OFFLINE DELIVERY</span></div>
+          <div class="table-wrap"><table class="admin-table coin-order-table"><thead><tr><th>Order</th><th>Karakter</th><th>Coin / Referensi</th><th>Aksi</th></tr></thead><tbody>{{COIN_ORDER_ROWS}}</tbody></table></div>
+          <p class="admin-note">Approve hanya setelah pembayaran terverifikasi. Sistem menolak pengiriman jika akun masih online.</p>
         </section>
 
         <section class="admin-card" id="audit">

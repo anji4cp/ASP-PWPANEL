@@ -10,6 +10,9 @@ Ubuntu.
 ## Fitur
 
 - Pendaftaran, login, panel akun, ranking, berita, dan unduhan pemain
+- Permintaan pembelian coin dengan antrean verifikasi administrator
+- Pemulihan karakter tersangkut ke titik aman tetap (wajib offline, kepemilikan
+  diperiksa, memakai cooldown, dan tercatat di audit)
 - Pengelolaan akun dan GM oleh admin
 - Dashboard admin responsif dengan sidebar dan kartu status bernuansa PW
 - Antrean cash Boutique dan sinkronisasi karakter
@@ -34,13 +37,23 @@ backup, atau schema konfigurasi pihak ketiga. Baca [NOTICE.md](NOTICE.md).
 
 Tidak ada paket Python pihak ketiga yang perlu dipasang.
 
+Pesanan coin tidak menarik pembayaran secara otomatis. Pemain memasukkan
+referensi pembayaran, lalu administrator memverifikasi dan menyetujui
+pengiriman. Coin yang disetujui ditambahkan melalui operasi PW GameDB
+`DBModifyRoleData`, bukan dengan mengubah cache karakter. Fitur Unstuck membaca
+status karakter lengkap, hanya mengganti world dan koordinat yang sudah
+dikonfigurasi, lalu menyimpannya kembali. Pemain tidak dapat memasukkan
+koordinat bebas.
+
 ## Menjalankan untuk pengembangan
 
 1. Clone repositori.
 2. Salin nilai dari `.env.example` ke environment shell atau service.
 3. Buat `/etc/pw155-web/db.cnf` berisi akun MariaDB dengan hak akses terbatas.
 4. Buat CSRF secret unik minimal 32 karakter.
-5. Jalankan panel:
+5. Terapkan `database/player-services.sql` sebagai root MariaDB saat
+   memperbarui instalasi lama.
+6. Jalankan panel:
 
 ```bash
 export PW155_WEB_CSRF_SECRET="ganti-dengan-secret-acak-yang-unik"

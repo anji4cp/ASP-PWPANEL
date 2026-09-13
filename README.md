@@ -9,6 +9,9 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
 ## Features
 
 - Player registration, sign-in, account panel, rankings, news, and downloads
+- Player coin-purchase requests with an administrator verification queue
+- Self-service stuck-character recovery to a fixed safe point (offline only,
+  ownership checked, cooldown enforced, and audited)
 - Admin account and GM management
 - Responsive admin dashboard with sidebar navigation and PW-themed status cards
 - Boutique cash queue and character synchronization
@@ -34,13 +37,22 @@ credentials, backups, or third-party configuration schemas. See
 
 No third-party Python packages are required.
 
+Coin orders do not charge a payment provider automatically. A player records a
+payment reference, then an administrator verifies it and approves delivery.
+Approved coins are added through PW GameDB's `DBModifyRoleData` operation, not
+by editing the read-only character cache. Character recovery reads the complete
+role status, changes only the configured world and coordinates, then writes the
+status back. Players cannot enter arbitrary coordinates.
+
 ## Quick start for development
 
 1. Clone the repository.
 2. Copy `.env.example` values into your shell or service environment.
 3. Create `/etc/pw155-web/db.cnf` with a least-privileged MariaDB account.
 4. Generate a unique CSRF secret of at least 32 characters.
-5. Run the panel:
+5. Apply `database/player-services.sql` as MariaDB root when upgrading an
+   existing installation.
+6. Run the panel:
 
 ```bash
 export PW155_WEB_CSRF_SECRET="replace-this-with-a-unique-random-secret"

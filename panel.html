@@ -51,6 +51,35 @@
       <div class="character-grid">{{CHARACTERS}}</div>
     </section>
 
+    <section class="panel-block player-service-grid">
+      <div class="player-service-card coin-service">
+        <span class="section-kicker">COIN SERVICE</span>
+        <h2>Beli Coin In-Game</h2>
+        <p>Pilih karakter dan paket. Pesanan masuk ke admin untuk verifikasi pembayaran sebelum coin dikirim.</p>
+        <form method="post" action="/coin/order" class="service-form">
+          <input type="hidden" name="csrf" value="{{CSRF}}">
+          <label>Karakter<select name="role_id" required {{COIN_FORM_DISABLED}}>{{ROLE_OPTIONS}}</select></label>
+          <label>Paket coin<select name="amount" required>
+            <option value="1000000">1.000.000 Coin</option><option value="5000000">5.000.000 Coin</option>
+            <option value="10000000">10.000.000 Coin</option><option value="50000000">50.000.000 Coin</option>
+          </select></label>
+          <label>Referensi pembayaran<input name="payment_reference" minlength="3" maxlength="64" placeholder="Nomor transaksi / catatan" required></label>
+          <button type="submit" {{COIN_FORM_DISABLED}}>Kirim Pesanan</button>
+        </form>
+      </div>
+      <div class="player-service-card unstuck-service">
+        <span class="section-kicker">CHARACTER RECOVERY</span>
+        <h2>Teleport Aman</h2>
+        <p>Tombol <strong>Teleport to Safe Point</strong> tersedia pada setiap kartu karakter. Gunakan hanya jika karakter tersangkut.</p>
+        <ul><li>Logout seluruh karakter dari game.</li><li>Karakter dipindah ke titik aman yang ditentukan server.</li><li>Cooldown 30 menit dan seluruh tindakan dicatat.</li></ul>
+      </div>
+    </section>
+
+    <section class="panel-block">
+      <div class="section-heading"><div><span class="section-kicker">TRANSACTIONS</span><h2>Riwayat Pesanan Coin</h2></div></div>
+      <div class="table-wrap"><table class="admin-table player-order-table"><thead><tr><th>Order</th><th>Karakter</th><th>Coin</th><th>Referensi</th><th>Status</th></tr></thead><tbody>{{COIN_ORDER_ROWS}}</tbody></table></div>
+    </section>
+
     <section class="panel-block security-grid">
       <div>
         <span class="section-kicker">ACCOUNT SECURITY</span>

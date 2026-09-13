@@ -52,6 +52,39 @@ class ValidationTests(unittest.TestCase):
         self.assertNotIn("{{", body)
         self.assertTrue(app.valid_csrf_token(token))
 
+    def test_panel_has_owned_character_services(self):
+        profile = {"account_id": 32, "username": "player_01",
+                   "created_at": "now", "last_game_login": "-"}
+        characters = [{"role_id": 33, "name": "Hero", "level": 10,
+                       "class_name": "Wizard", "gender": "Pria", "faction": "-"}]
+        orders = [{"id": "7", "role_name": "Hero", "amount": "1000000",
+                   "reference": "PAY-7", "status": "pending", "created_at": "now"}]
+        body, _ = app.render_panel(profile, characters, coin_orders=orders)
+        self.assertIn('action="/character/unstuck"', body)
+        self.assertIn('value="33"', body)
+        self.assertIn('action="/coin/order"', body)
+        self.assertIn("PAY-7", body)
+        self.assertNotIn("{{", body)
+
+    def test_coin_order_rejects_unowned_role(self):
+        with patch.object(app, "owned_character", return_value=None), self.assertRaises(ValueError):
+            app.create_coin_order(32, 99, 1_000_000, "PAY-1", "127.0.0.1")
+
+    def test_unstuck_requires_offline_account(self):
+        with patch.object(app, "owned_character", return_value={"role_id": 33, "name": "Hero"}), \
+                patch.object(app, "account_is_online", return_value=True), self.assertRaises(ValueError):
+            app.unstuck_character(32, "player_01", 33, "127.0.0.1")
+
+    def test_admin_template_lists_coin_order(self):
+        orders = [{"id": "7", "username": "player_01", "role_id": "33",
+                   "role_name": "Hero", "amount": "5000000", "reference": "PAY-7",
+                   "created_at": "now"}]
+        body, _ = app.render_admin((1024, "admin"), [], (0, 0, 0), [],
+                                   {"services": [], "events": []}, [], coin_orders=orders)
+        self.assertIn("Coin Purchase Orders", body)
+        self.assertIn("PAY-7", body)
+        self.assertIn('action="/admin/coin/action"', body)
+
     def test_admin_authorization_uses_explicit_allowlist(self):
         with patch.object(app, "run_db", return_value=["1"]) as query:
             self.assertTrue(app.is_panel_admin(1024))

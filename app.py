@@ -40,6 +40,8 @@ CPW_CONTROL_DIR = Path(os.environ.get(
 BACKUP_CONTROL_DIR = Path(os.environ.get(
     "PW155_BACKUP_CONTROL_DIR", "/var/lib/pw155-backup-control"
 ))
+COIN_PACKAGES = {1_000_000, 5_000_000, 10_000_000, 50_000_000}
+UNSTUCK_COOLDOWN_MINUTES = 30
 USERNAME_RE = re.compile(r"^[A-Za-z0-9_]{3,20}$")
 PASSWORD_RE = re.compile(r"^[A-Za-z0-9_.-]{6,32}$")
 SERVER_PORTS = {
@@ -330,6 +332,138 @@ def boutique_pending(limit=20):
     )
     return [dict(zip(("username", "gold", "status", "created_at"),
                      row.split("\t", 3))) for row in rows]
+
+
+def account_is_online(account_id):
+    rows = run_db(
+        "SELECT COUNT(*) FROM pw.point WHERE "
+        f"uid={int(account_id)} AND COALESCE(zoneid,0)<>0;"
+    )
+    return bool(rows and int(rows[0]))
+
+
+def owned_character(account_id, role_id):
+    rows = run_db(
+        "SELECT role_id,role_name FROM pw.roles WHERE "
+        f"account_id={int(account_id)} AND role_id={int(role_id)} LIMIT 1;"
+    )
+    if not rows:
+        return None
+    value, name = rows[0].split("\t", 1)
+    return {"role_id": int(value), "name": name}
+
+
+def create_coin_order(account_id, role_id, amount, payment_reference, client_ip):
+    if int(amount) not in COIN_PACKAGES:
+        raise ValueError("Paket coin tidak valid")
+    character = owned_character(account_id, role_id)
+    if not character:
+        raise ValueError("Karakter bukan milik akun ini")
+    reference = payment_reference.strip()
+    if not re.fullmatch(r"[A-Za-z0-9_.\-/ ]{3,64}", reference):
+        raise ValueError("Referensi pembayaran harus 3–64 karakter")
+    rows = run_db(
+        "INSERT INTO pw_portal.coin_orders(account_id,role_id,role_name,coin_amount,"
+        "payment_reference,client_ip) VALUES ("
+        f"{int(account_id)},{int(role_id)},{sql_literal(character['name'])},{int(amount)},"
+        f"{sql_literal(reference)},{sql_literal(client_ip[:45])}); SELECT LAST_INSERT_ID();"
+    )
+    if not rows:
+        raise RuntimeError("Pesanan tidak tersimpan")
+    return int(rows[-1])
+
+
+def player_coin_orders(account_id, limit=10):
+    rows = run_db(
+        "SELECT id,role_name,coin_amount,payment_reference,status,"
+        "DATE_FORMAT(created_at,'%Y-%m-%d %H:%i') FROM pw_portal.coin_orders "
+        f"WHERE account_id={int(account_id)} ORDER BY id DESC LIMIT {min(max(int(limit),1),20)};"
+    )
+    return [dict(zip(("id", "role_name", "amount", "reference", "status", "created_at"),
+                     row.split("\t", 5))) for row in rows]
+
+
+def pending_coin_orders(limit=30):
+    rows = run_db(
+        "SELECT o.id,u.name,o.role_id,o.role_name,o.coin_amount,o.payment_reference,"
+        "DATE_FORMAT(o.created_at,'%Y-%m-%d %H:%i') FROM pw_portal.coin_orders o "
+        "INNER JOIN pw.users u ON u.ID=o.account_id WHERE o.status='pending' "
+        f"ORDER BY o.id LIMIT {min(max(int(limit),1),100)};"
+    )
+    keys = ("id", "username", "role_id", "role_name", "amount", "reference", "created_at")
+    return [dict(zip(keys, row.split("\t", 6))) for row in rows]
+
+
+def complete_coin_order(actor, order_id, approved, client_ip):
+    rows = run_db(
+        "SELECT account_id,role_id,role_name,coin_amount,status FROM pw_portal.coin_orders "
+        f"WHERE id={int(order_id)} LIMIT 1;"
+    )
+    if not rows:
+        raise ValueError("Pesanan tidak ditemukan")
+    account_id, role_id, role_name, amount, status = rows[0].split("\t", 4)
+    if status != "pending":
+        raise ValueError("Pesanan sudah diproses")
+    if approved:
+        if account_is_online(account_id):
+            raise ValueError("Akun harus logout dari game sebelum coin dikirim")
+        claimed = run_db(
+            "UPDATE pw_portal.coin_orders SET status='processing',"
+            f"processed_by={int(actor[0])},processed_at=CURRENT_TIMESTAMP WHERE "
+            f"id={int(order_id)} AND status='pending'; SELECT ROW_COUNT();"
+        )
+        if not claimed or claimed[-1] != "1":
+            raise ValueError("Pesanan sedang atau sudah diproses")
+        try:
+            from role_operations import add_pocket_coins
+            add_pocket_coins(int(role_id), int(amount))
+        except Exception:
+            run_db(f"UPDATE pw_portal.coin_orders SET status='failed' WHERE id={int(order_id)};")
+            raise
+        new_status, action = "completed", "coin.complete"
+    else:
+        new_status, action = "rejected", "coin.reject"
+    run_db(
+        "START TRANSACTION; UPDATE pw_portal.coin_orders SET "
+        f"status={sql_literal(new_status)},processed_by={int(actor[0])},processed_at=CURRENT_TIMESTAMP "
+        f"WHERE id={int(order_id)} AND status={sql_literal('processing' if approved else 'pending')}; "
+        "INSERT INTO pw_portal.audit_log(actor_id,actor_username,action_name,target_id,"
+        "target_username,details,client_ip) VALUES ("
+        f"{int(actor[0])},{sql_literal(actor[1])},{sql_literal(action)},{int(account_id)},"
+        f"{sql_literal(role_name)},{sql_literal(('mengirim ' + amount + ' coin kepada') if approved else 'menolak pesanan coin untuk')},"
+        f"{sql_literal(client_ip[:45])}); COMMIT;"
+    )
+    return {"role_name": role_name, "amount": int(amount), "status": new_status}
+
+
+def unstuck_character(account_id, username, role_id, client_ip):
+    character = owned_character(account_id, role_id)
+    if not character:
+        raise ValueError("Karakter bukan milik akun ini")
+    if account_is_online(account_id):
+        raise ValueError("Logout semua karakter dari game sebelum memakai Unstuck")
+    recent = run_db(
+        "SELECT COUNT(*) FROM pw_portal.unstuck_log WHERE "
+        f"account_id={int(account_id)} AND created_at > CURRENT_TIMESTAMP - INTERVAL "
+        f"{UNSTUCK_COOLDOWN_MINUTES} MINUTE;"
+    )
+    if recent and int(recent[0]):
+        raise ValueError(f"Unstuck hanya dapat dipakai setiap {UNSTUCK_COOLDOWN_MINUTES} menit")
+    from role_operations import move_to_safe_point
+    result = move_to_safe_point(int(role_id))
+    destination = result["destination"]
+    run_db(
+        "START TRANSACTION; INSERT INTO pw_portal.unstuck_log(account_id,role_id,role_name,"
+        "world_tag,pos_x,pos_y,pos_z,client_ip) VALUES ("
+        f"{int(account_id)},{int(role_id)},{sql_literal(character['name'])},"
+        f"{int(destination['world_tag'])},{destination['x']},{destination['y']},{destination['z']},"
+        f"{sql_literal(client_ip[:45])}); INSERT INTO pw_portal.audit_log(actor_id,actor_username,"
+        "action_name,target_id,target_username,details,client_ip) VALUES ("
+        f"{int(account_id)},{sql_literal(username)},'character.unstuck',{int(role_id)},"
+        f"{sql_literal(character['name'])},'memindahkan karakter sendiri ke titik aman',"
+        f"{sql_literal(client_ip[:45])}); COMMIT;"
+    )
+    return character
 
 
 def published_news(limit=20):
@@ -933,7 +1067,7 @@ def render_downloads(manifest=None):
     return template.replace("{{DOWNLOAD_CARDS}}", "".join(cards))
 
 
-def render_panel(profile, characters, message="", level=""):
+def render_panel(profile, characters, message="", level="", coin_orders=None):
     template = (BASE_DIR / "panel.html").read_text(encoding="utf-8")
     token = new_csrf_token()
     if characters:
@@ -946,6 +1080,11 @@ def render_panel(profile, characters, message="", level=""):
                 f'<p>{html.escape(character["class_name"])} · '
                 f'{html.escape(character["gender"])}</p>'
                 f'<small>Faction: {html.escape(character["faction"])}</small>'
+                '<form method="post" action="/character/unstuck" class="character-action-form">'
+                f'<input type="hidden" name="csrf" value="{html.escape(token, quote=True)}">'
+                f'<input type="hidden" name="role_id" value="{int(character["role_id"])}">'
+                '<button type="submit" class="small-button secondary-button">Teleport to Safe Point</button>'
+                '</form>'
                 '</article>'
             )
         characters_html = "".join(cards)
@@ -957,6 +1096,24 @@ def render_panel(profile, characters, message="", level=""):
             'akan ditambahkan pada tahap berikutnya.</p></div>'
         )
         character_note = '<span class="cache-state">Menunggu sinkronisasi</span>'
+    order_rows = []
+    status_labels = {"pending": "Menunggu verifikasi", "completed": "Coin terkirim",
+                     "rejected": "Ditolak", "failed": "Gagal"}
+    for order in (coin_orders or []):
+        amount = f'{int(order["amount"]):,}'.replace(",", ".")
+        status = status_labels.get(order["status"], order["status"])
+        order_rows.append(
+            f'<tr><td>#{order["id"]}</td><td><strong>{html.escape(order["role_name"])}</strong>'
+            f'<small>{html.escape(order["created_at"])}</small></td><td>{amount}</td>'
+            f'<td>{html.escape(order["reference"])}</td><td><span class="order-status {html.escape(order["status"])}">'
+            f'{html.escape(status)}</span></td></tr>'
+        )
+    if not order_rows:
+        order_rows.append('<tr><td colspan="5" class="table-empty">Belum ada pesanan coin.</td></tr>')
+    role_options = "".join(
+        f'<option value="{int(item["role_id"])}">{html.escape(item["name"])}</option>'
+        for item in characters
+    )
     output = template
     replacements = {
         "{{NOTICE}}": notice_html(message, level),
@@ -968,6 +1125,9 @@ def render_panel(profile, characters, message="", level=""):
         "{{CHARACTER_COUNT}}": str(len(characters)),
         "{{CHARACTERS}}": characters_html,
         "{{CHARACTER_NOTE}}": character_note,
+        "{{ROLE_OPTIONS}}": role_options,
+        "{{COIN_ORDER_ROWS}}": "".join(order_rows),
+        "{{COIN_FORM_DISABLED}}": "" if role_options else "disabled",
         "{{ADMIN_LINK}}": (
             '<a class="text-link" href="/admin">Admin Panel</a>'
             if profile.get("is_admin") else ""
@@ -980,7 +1140,7 @@ def render_panel(profile, characters, message="", level=""):
 
 def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
                  editor=None, boutique_queue=None, maps=None, search="", message="", level="",
-                 backups=None):
+                 backups=None, coin_orders=None):
     template = (BASE_DIR / "admin.html").read_text(encoding="utf-8")
     token = new_csrf_token()
     monitor = support_monitor_state(monitor)
@@ -1078,6 +1238,23 @@ def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
         )
     if not boutique_rows:
         boutique_rows.append('<tr><td colspan="4" class="table-empty">Tidak ada kiriman pending.</td></tr>')
+    coin_rows = []
+    for item in (coin_orders or []):
+        amount = f'{int(item["amount"]):,}'.replace(",", ".")
+        coin_rows.append(
+            f'<tr><td><strong>#{item["id"]} · {html.escape(item["username"])}</strong>'
+            f'<small>{html.escape(item["created_at"])}</small></td>'
+            f'<td><strong>{html.escape(item["role_name"])}</strong><small>Role #{item["role_id"]}</small></td>'
+            f'<td>{amount}<small>{html.escape(item["reference"])}</small></td>'
+            '<td><form method="post" action="/admin/coin/action" class="inline-form coin-admin-actions">'
+            f'<input type="hidden" name="csrf" value="{html.escape(token, quote=True)}">'
+            f'<input type="hidden" name="order_id" value="{item["id"]}">'
+            '<button type="submit" name="action" value="approve" class="small-button">Approve</button>'
+            '<button type="submit" name="action" value="reject" class="small-button danger">Reject</button>'
+            '</form></td></tr>'
+        )
+    if not coin_rows:
+        coin_rows.append('<tr><td colspan="4" class="table-empty">Tidak ada pesanan coin pending.</td></tr>')
     maps = maps or map_control_state()
     map_rows = []
     states = maps.get("states", {})
@@ -1186,6 +1363,7 @@ def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
         "{{NEWS_PUBLISHED}}": editor_published,
         "{{NEWS_EDITOR_TITLE}}": editor_title,
         "{{BOUTIQUE_ROWS}}": "".join(boutique_rows),
+        "{{COIN_ORDER_ROWS}}": "".join(coin_rows),
         "{{MAP_ROWS}}": "".join(map_rows),
         "{{MAP_STATE}}": html.escape(map_state),
         "{{MAP_UPDATED}}": html.escape(str(maps.get("checked_at", "-"))),
@@ -1322,6 +1500,7 @@ class PWHandler(BaseHTTPRequestHandler):
         try:
             profile = account_profile(account[0])
             characters = account_characters(account[0])
+            coin_orders = player_coin_orders(account[0])
             if profile:
                 profile["is_admin"] = is_panel_admin(account[0])
         except (RuntimeError, subprocess.TimeoutExpired):
@@ -1331,7 +1510,7 @@ class PWHandler(BaseHTTPRequestHandler):
         if not profile:
             self.redirect("/login", "pwsession=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict")
             return
-        body, token = render_panel(profile, characters, message, level)
+        body, token = render_panel(profile, characters, message, level, coin_orders)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
                         "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
@@ -1351,13 +1530,15 @@ class PWHandler(BaseHTTPRequestHandler):
             boutique_queue = boutique_pending()
             maps = map_control_state()
             backups = backup_control_state()
+            coin_orders = pending_coin_orders()
         except (RuntimeError, subprocess.TimeoutExpired, ValueError):
             self.send_error(HTTPStatus.SERVICE_UNAVAILABLE,
                             "Admin panel sedang tidak tersedia")
             return
         body, token = render_admin(account, accounts, totals, audit_rows, monitor,
                                    news_items, editor, boutique_queue, maps,
-                                   search, message, level, backups=backups)
+                                   search, message, level, backups=backups,
+                                   coin_orders=coin_orders)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
                             "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
@@ -1492,8 +1673,10 @@ class PWHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path not in ("/register", "/login", "/logout", "/change-password",
+                             "/coin/order", "/character/unstuck",
                              "/admin/gm", "/admin/news/save", "/admin/news/status",
-                             "/admin/boutique/grant", "/admin/maps/action", "/admin/patch/action",
+                             "/admin/boutique/grant", "/admin/coin/action",
+                             "/admin/maps/action", "/admin/patch/action",
                              "/admin/backups/create"):
             self.send_error(HTTPStatus.NOT_FOUND)
             return
@@ -1518,6 +1701,12 @@ class PWHandler(BaseHTTPRequestHandler):
             self.handle_admin_news_status(fields)
         elif self.path == "/admin/boutique/grant":
             self.handle_admin_boutique_grant(fields)
+        elif self.path == "/admin/coin/action":
+            self.handle_admin_coin_action(fields)
+        elif self.path == "/coin/order":
+            self.handle_coin_order(fields)
+        elif self.path == "/character/unstuck":
+            self.handle_character_unstuck(fields)
         elif self.path == "/admin/maps/action":
             self.handle_admin_maps_action(fields)
         elif self.path == "/admin/patch/action":
@@ -1596,6 +1785,64 @@ class PWHandler(BaseHTTPRequestHandler):
             return
         self.send_panel(account,
                         "Sandi web dan client berhasil diperbarui.", "success")
+
+    def handle_coin_order(self, fields):
+        account = self.session_account()
+        if not account:
+            self.redirect("/login")
+            return
+        role_text = fields.get("role_id", [""])[0]
+        amount_text = fields.get("amount", [""])[0]
+        reference = fields.get("payment_reference", [""])[0]
+        if not role_text.isdigit() or not amount_text.isdigit():
+            self.send_panel(account, "Karakter atau paket coin tidak valid.", "error")
+            return
+        try:
+            order_id = create_coin_order(account[0], int(role_text), int(amount_text),
+                                         reference, self.client_key())
+        except (RuntimeError, subprocess.TimeoutExpired, ValueError) as error:
+            self.send_panel(account, str(error), "error")
+            return
+        self.send_panel(account, f"Pesanan coin #{order_id} dikirim untuk verifikasi admin.",
+                        "success")
+
+    def handle_character_unstuck(self, fields):
+        account = self.session_account()
+        if not account:
+            self.redirect("/login")
+            return
+        role_text = fields.get("role_id", [""])[0]
+        if not role_text.isdigit():
+            self.send_panel(account, "Karakter tidak valid.", "error")
+            return
+        try:
+            character = unstuck_character(account[0], account[1], int(role_text),
+                                           self.client_key())
+        except (RuntimeError, subprocess.TimeoutExpired, OSError, ValueError) as error:
+            self.send_panel(account, str(error), "error")
+            return
+        self.send_panel(account,
+                        f"{character['name']} dipindahkan ke titik aman. Silakan login kembali.",
+                        "success")
+
+    def handle_admin_coin_action(self, fields):
+        account = self.require_admin()
+        if not account:
+            return
+        order_text = fields.get("order_id", [""])[0]
+        action = fields.get("action", [""])[0]
+        if not order_text.isdigit() or action not in ("approve", "reject"):
+            self.send_error(HTTPStatus.BAD_REQUEST, "Aksi pesanan coin tidak valid")
+            return
+        try:
+            result = complete_coin_order(account, int(order_text), action == "approve",
+                                         self.client_key())
+        except (RuntimeError, subprocess.TimeoutExpired, OSError, ValueError) as error:
+            self.send_admin(account, message=str(error), level="error")
+            return
+        verb = "dikirim" if result["status"] == "completed" else "ditolak"
+        self.send_admin(account, message=f"Pesanan coin untuk {result['role_name']} {verb}.",
+                        level="success")
 
     def handle_admin_gm(self, fields):
         account = self.session_account()
