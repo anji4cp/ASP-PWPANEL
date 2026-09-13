@@ -19,7 +19,6 @@ class ProductSeparationTests(unittest.TestCase):
     def test_launcher_news_assets_are_installed(self):
         installer = (ROOT / "installer" / "install-asp-pwpanel.sh").read_text(encoding="utf-8")
         self.assertIn("launcher-news.html", installer)
-        self.assertIn("static/launcher-news.css", installer)
 
 
 if __name__ == "__main__":

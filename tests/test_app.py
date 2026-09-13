@@ -389,9 +389,10 @@ class ValidationTests(unittest.TestCase):
             "date": "2026-09-13", "author": "admin",
         }])
         self.assertIn("Server Update", body)
-        self.assertIn("launcher-news.css", body)
+        self.assertIn("font-family: Arial", body)
         self.assertNotIn("{{", body)
         self.assertNotIn("<script", body.lower())
+        self.assertNotIn("stylesheet", body.lower())
 
     def test_news_status_rejects_invalid_value_before_database(self):
         with patch.object(app, "run_db") as query:

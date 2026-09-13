@@ -1410,6 +1410,12 @@ class PWHandler(BaseHTTPRequestHandler):
         super().log_message(fmt, *args)
 
     def end_headers(self):
+        # The stock PW launcher hosts an old Internet Explorer ActiveX control.
+        # Frame/CSP headers can make that native host render a blank document.
+        if urlsplit(self.path).path == "/launcher-news":
+            self.send_header("X-UA-Compatible", "IE=EmulateIE7")
+            super().end_headers()
+            return
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "DENY")
         self.send_header("Referrer-Policy", "no-referrer")
@@ -1623,8 +1629,7 @@ class PWHandler(BaseHTTPRequestHandler):
                 self.send_error(HTTPStatus.SERVICE_UNAVAILABLE,
                                 "Berita sedang tidak tersedia")
                 return
-            headers = {"X-UA-Compatible": "IE=edge"} if legacy_launcher else None
-            self.send_bytes(HTTPStatus.OK, body, "text/html; charset=utf-8", headers)
+            self.send_bytes(HTTPStatus.OK, body, "text/html; charset=utf-8")
             return
         if path == "/guide":
             template = BASE_DIR / f"{path[1:]}.html"
@@ -1687,7 +1692,7 @@ class PWHandler(BaseHTTPRequestHandler):
             else:
                 self.send_backup_download(account, path.rsplit("/", 1)[1])
             return
-        if path in ("/static/style.css", "/static/launcher-news.css", "/static/app.js"):
+        if path in ("/static/style.css", "/static/app.js"):
             filename = path.rsplit("/", 1)[1]
             content_type = "text/css; charset=utf-8" if filename.endswith(".css") else "text/javascript; charset=utf-8"
             body = (STATIC_DIR / filename).read_bytes()
