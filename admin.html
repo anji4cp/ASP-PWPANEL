@@ -18,6 +18,7 @@
         <span class="admin-nav-label">Overview</span>
         <a class="active" href="#dashboard"><span class="nav-icon">⌂</span>Dashboard</a>
         <a href="#server-control"><span class="nav-icon">◈</span>Server &amp; Map</a>
+        <a href="#game-announcements"><span class="nav-icon">◌</span>Broadcast &amp; Shutdown</a>
         <a href="#services"><span class="nav-icon">●</span>Service Monitor</a>
         <span class="admin-nav-label">Management</span>
         <a href="#accounts"><span class="nav-icon">♙</span>Account &amp; GM</a>
@@ -68,6 +69,21 @@
           </details>
           <p class="admin-note">Maksimal {{MAP_MAX_SELECTION}} map per aksi. Map aktif aman dipilih kembali.</p>
           <div class="map-last-action"><small>AKSI TERAKHIR</small><p>{{MAP_LAST_ACTION}}</p></div>
+        </section>
+
+        <section class="admin-card game-control-card" id="game-announcements">
+          <div class="admin-card-header"><div><span class="section-kicker">IN-GAME OPERATIONS</span><h2>Broadcast &amp; Safe Shutdown</h2><p>Kirim pengumuman ke pemain atau jadwalkan penghentian server dengan hitung mundur.</p></div><span class="admin-status-summary"><strong>{{GAME_CONTROL_STATE}}</strong><small>{{GAME_CONTROL_UPDATED}}</small></span></div>
+          {{GAME_CONTROL_ERROR}}
+          <div class="game-control-state"><span class="state-dot"></span><div><small>STATUS SHUTDOWN</small><p>{{GAME_CONTROL_DETAIL}}</p></div></div>
+          <div class="game-control-grid">
+            <form method="post" action="/admin/game/action" class="game-operation-form broadcast-form"><input type="hidden" name="csrf" value="{{CSRF}}"><input type="hidden" name="action" value="broadcast"><div><span class="section-kicker">WORLD CHAT</span><h3>Broadcast In-Game</h3><p>Pesan dikirim sebagai pengumuman sistem tanpa menampilkan nama karakter GM atau awalan tambahan.</p></div><label>Pesan pengumuman<input name="message" minlength="1" maxlength="200" placeholder="Contoh: Event dimulai 10 menit lagi." required></label><button type="submit">Kirim Broadcast</button><small>Yang tampil di dalam game hanya isi pesan yang Anda masukkan. Hasil pengiriman tercatat pada Aksi Terakhir.</small></form>
+            <div class="shutdown-operation">
+              <form method="post" action="/admin/game/action" class="game-operation-form safe-shutdown-form"><input type="hidden" name="csrf" value="{{CSRF}}"><input type="hidden" name="action" value="schedule-shutdown"><div><span class="section-kicker danger-kicker">CONTROLLED STOP</span><h3>Safe Shutdown</h3><p>Server mengumumkan hitung mundur, lalu menghentikan semua map dan daemon inti secara berurutan.</p></div><div class="shutdown-fields"><label>Hitung mundur (detik)<input type="number" name="seconds" min="10" max="86400" step="1" value="300" required></label><label>Alasan<input name="reason" minlength="3" maxlength="120" value="Server maintenance" required></label></div><label class="check-label"><input type="checkbox" name="confirm" value="yes" required>Saya memahami seluruh pemain akan terputus ketika hitung mundur selesai.</label><button type="submit" class="danger-button">Jadwalkan Safe Shutdown</button></form>
+              <form method="post" action="/admin/game/action" class="cancel-shutdown-form"><input type="hidden" name="csrf" value="{{CSRF}}"><input type="hidden" name="action" value="cancel-shutdown"><label class="check-label"><input type="checkbox" name="confirm" value="yes" required{{GAME_CONTROL_CANCEL_DISABLED}}>Konfirmasi pembatalan jadwal aktif.</label><button type="submit" class="secondary-button"{{GAME_CONTROL_CANCEL_DISABLED}}>Batalkan Shutdown</button></form>
+            </div>
+          </div>
+          <div class="game-control-last"><span class="section-kicker">AKSI TERAKHIR</span><p>{{GAME_CONTROL_LAST}}</p></div>
+          <p class="admin-note">Hitung mundur tetap berjalan di Ubuntu walaupun browser ditutup. Pesan dipublikasikan lebih rapat menjelang 10 detik terakhir.</p>
         </section>
 
         <section class="admin-card" id="services">

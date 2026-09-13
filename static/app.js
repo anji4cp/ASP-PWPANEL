@@ -43,3 +43,21 @@ document.querySelectorAll('.admin-nav a').forEach((link) => {
     link.classList.add('active');
   });
 });
+
+function updateSafeShutdownCountdown() {
+  const countdown = document.querySelector('[data-shutdown-at]');
+  if (!countdown) return;
+  const executeAt = Number.parseInt(countdown.dataset.shutdownAt, 10);
+  if (!Number.isFinite(executeAt)) return;
+  const remaining = Math.max(0, executeAt - Math.floor(Date.now() / 1000));
+  const hours = Math.floor(remaining / 3600);
+  const minutes = Math.floor((remaining % 3600) / 60);
+  const seconds = remaining % 60;
+  countdown.textContent = hours > 0
+    ? `${hours}j ${minutes}m ${seconds}d tersisa`
+    : minutes > 0 ? `${minutes}m ${seconds}d tersisa` : `${seconds} detik tersisa`;
+  countdown.classList.toggle('countdown-critical', remaining <= 30);
+}
+
+updateSafeShutdownCountdown();
+setInterval(updateSafeShutdownCountdown, 1000);

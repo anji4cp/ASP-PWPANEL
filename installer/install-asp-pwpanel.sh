@@ -24,7 +24,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends python3 mariadb-server mariadb-client openssl ca-certificates curl
 
-for required in app.py sync_characters.py gm_position.py role_operations.py monitor_services.py map_control_worker.py backup_control_worker.py pw155-backup-db.sh index.html login.html panel.html admin.html ranking.html news.html launcher-news.html guide.html downloads.html patch_manager.html static/style.css static/app.js; do
+for required in app.py sync_characters.py gm_position.py role_operations.py monitor_services.py map_control_worker.py backup_control_worker.py game_control_worker.py pw155-backup-db.sh index.html login.html panel.html admin.html ranking.html news.html launcher-news.html guide.html downloads.html patch_manager.html static/style.css static/app.js; do
   if [[ ! -f "$source_dir/$required" ]]; then
     echo "File sumber tidak lengkap: $required" >&2
     exit 1
@@ -46,7 +46,10 @@ fi
 if ! getent group pwbackup >/dev/null 2>&1; then
   groupadd --system pwbackup
 fi
-usermod -a -G pwmonitor,pwmap,pwbackup pwweb
+if ! getent group pwgamectl >/dev/null 2>&1; then
+  groupadd --system pwgamectl
+fi
+usermod -a -G pwmonitor,pwmap,pwbackup,pwgamectl pwweb
 
 install -d -o root -g root -m 0755 "$install_dir" "$install_dir/static" "$install_dir/downloads"
 install -d -o root -g pwweb -m 0750 "$config_dir"
@@ -56,6 +59,8 @@ install -d -o root -g pwmap -m 0770 /var/lib/pw155-map-control/requests
 install -d -o root -g pwbackup -m 0750 /var/lib/pw155-backup-control
 install -d -o root -g pwbackup -m 0770 /var/lib/pw155-backup-control/requests
 install -d -o root -g pwbackup -m 0750 /var/lib/pw155-backup-control/files
+install -d -o root -g pwgamectl -m 0750 /var/lib/pw155-game-control
+install -d -o root -g pwgamectl -m 0770 /var/lib/pw155-game-control/requests
 install -d -o root -g root -m 0755 /srv/pw155/tools
 install -d -o root -g root -m 0700 /srv/pw155/backups/database
 install -o root -g root -m 0644 "$source_dir/app.py" "$install_dir/app.py"
@@ -65,6 +70,7 @@ install -o root -g root -m 0755 "$source_dir/role_operations.py" "$install_dir/r
 install -o root -g root -m 0755 "$source_dir/monitor_services.py" "$install_dir/monitor_services.py"
 install -o root -g root -m 0755 "$source_dir/map_control_worker.py" "$install_dir/map_control_worker.py"
 install -o root -g root -m 0755 "$source_dir/backup_control_worker.py" "$install_dir/backup_control_worker.py"
+install -o root -g root -m 0755 "$source_dir/game_control_worker.py" "$install_dir/game_control_worker.py"
 install -o root -g root -m 0750 "$source_dir/pw155-backup-db.sh" /srv/pw155/tools/pw155-backup-db.sh
 install -o root -g root -m 0644 "$source_dir/index.html" "$install_dir/index.html"
 install -o root -g root -m 0644 "$source_dir/login.html" "$install_dir/login.html"
@@ -430,13 +436,14 @@ Requires=mariadb.service
 Type=simple
 User=pwweb
 Group=pwweb
-SupplementaryGroups=pwmonitor pwmap pwbackup
+SupplementaryGroups=pwmonitor pwmap pwbackup pwgamectl
 WorkingDirectory=/opt/pw155-web
 EnvironmentFile=/etc/pw155-web/web.env
 Environment=PW155_WEB_DB_CONFIG=/etc/pw155-web/db.cnf
 Environment=PW155_MONITOR_DIR=/var/lib/pw155-monitor
 Environment=PW155_MAP_CONTROL_DIR=/var/lib/pw155-map-control
 Environment=PW155_BACKUP_CONTROL_DIR=/var/lib/pw155-backup-control
+Environment=PW155_GAME_CONTROL_DIR=/var/lib/pw155-game-control
 ExecStart=/usr/bin/python3 /opt/pw155-web/app.py
 Restart=on-failure
 RestartSec=3
@@ -447,7 +454,7 @@ ProtectHome=true
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true
-ReadWritePaths=/var/lib/pw155-map-control/requests /var/lib/pw155-backup-control/requests
+ReadWritePaths=/var/lib/pw155-map-control/requests /var/lib/pw155-backup-control/requests /var/lib/pw155-game-control/requests
 RestrictSUIDSGID=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 LockPersonality=true
@@ -616,6 +623,41 @@ Unit=pw155-backup-control.service
 WantedBy=multi-user.target
 UNIT
 
+cat > /etc/systemd/system/pw155-game-control.service <<'UNIT'
+[Unit]
+Description=PW155 in-game broadcast and persistent safe shutdown worker
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/pw155-web
+Environment=PW155_GAME_CONTROL_DIR=/var/lib/pw155-game-control
+Environment=PW155_SERVICE_SCRIPT=/srv/pw155/tools/pw155-service.sh
+Environment=PW155_PROVIDER_HOST=127.0.0.1
+Environment=PW155_PROVIDER_PORT=29300
+Environment=PW155_WORLD_CHAT_OPCODE=120
+ExecStart=/usr/bin/python3 /opt/pw155-web/game_control_worker.py run
+Restart=on-failure
+RestartSec=2
+KillMode=process
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/var/lib/pw155-game-control /srv/pw155/runtime
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
 cat > /etc/systemd/system/pw155-map-status.service <<'UNIT'
 [Unit]
 Description=Refresh PW155 map status
@@ -663,6 +705,7 @@ chmod 0644 /etc/systemd/system/pw155-character-sync.service \
   /etc/systemd/system/pw155-map-control.path \
   /etc/systemd/system/pw155-backup-control.service \
   /etc/systemd/system/pw155-backup-control.path \
+  /etc/systemd/system/pw155-game-control.service \
   /etc/systemd/system/pw155-map-status.service \
   /etc/systemd/system/pw155-map-status.timer
 systemctl daemon-reload
@@ -671,6 +714,8 @@ systemctl enable --now pw155-character-sync.timer
 systemctl enable --now pw155-monitor.timer
 systemctl enable --now pw155-map-control.path
 systemctl enable --now pw155-backup-control.path
+systemctl enable pw155-game-control.service
+systemctl restart pw155-game-control.service
 systemctl enable --now pw155-map-status.timer
 PW155_BACKUP_CONTROL_DIR=/var/lib/pw155-backup-control \
   PW155_BACKUP_ROOT=/srv/pw155/backups/database \

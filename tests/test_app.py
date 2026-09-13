@@ -145,6 +145,8 @@ class ValidationTests(unittest.TestCase):
         self.assertIn('href="/admin/patch"', body)
         self.assertIn("Backup Database", body)
         self.assertIn('action="/admin/backups/create"', body)
+        self.assertIn("Broadcast &amp; Safe Shutdown", body)
+        self.assertIn('action="/admin/game/action"', body)
         self.assertNotIn("{{", body)
         self.assertTrue(app.valid_csrf_token(token))
 
@@ -189,6 +191,57 @@ class ValidationTests(unittest.TestCase):
         self.assertIn("PW155-database-20260913T060000Z.tar.gz", body)
         self.assertIn("1.05 MB", body)
         self.assertIn("Download", body)
+        self.assertNotIn("{{", body)
+
+    def test_game_control_queue_and_scheduled_status_are_allowlisted(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "requests").mkdir()
+            (root / "status.json").write_text(
+                '{"busy":false,"updated_at":"now","scheduled":null}', encoding="utf-8")
+            with patch.object(app, "GAME_CONTROL_DIR", root):
+                request = app.queue_game_action(
+                    (1024, "admin"), "schedule-shutdown", "127.0.0.1",
+                    seconds=300, reason="Maintenance",
+                )
+                self.assertEqual(300, request["seconds"])
+                self.assertEqual(1, len(list((root / "requests").glob("*.json"))))
+                with self.assertRaises(ValueError):
+                    app.queue_game_action(
+                        (1024, "admin"), "schedule-shutdown", "127.0.0.1",
+                        seconds=5, reason="Too short",
+                    )
+
+    def test_anonymous_system_broadcast_is_queued(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "requests").mkdir()
+            (root / "status.json").write_text(
+                '{"busy":false,"scheduled":null}', encoding="utf-8")
+            with patch.object(app, "GAME_CONTROL_DIR", root):
+                request = app.queue_game_action(
+                    (1024, "admin"), "broadcast", "127.0.0.1",
+                    message="Event starts soon",
+                )
+            self.assertEqual("Event starts soon", request["message"])
+            self.assertNotIn("gm_role_id", request)
+
+    def test_game_control_template_renders_countdown_and_cancel(self):
+        game_control = {
+            "busy": False, "updated_at": "now", "error": None,
+            "scheduled": {"execute_at": 2000000000, "reason": "Maintenance",
+                          "actor": "admin"},
+            "last_action": {"actor": "admin", "action": "schedule-shutdown",
+                            "status": "scheduled", "message": "300 seconds"},
+        }
+        body, _ = app.render_admin(
+            (1024, "admin"), [], (0, 0, 0), [], {"services": [], "events": []}, [],
+            game_control=game_control,
+        )
+        self.assertIn('data-shutdown-at="2000000000"', body)
+        self.assertIn("Maintenance", body)
+        self.assertIn("Batalkan Shutdown", body)
+        self.assertNotIn('value="cancel-shutdown"><label class="check-label"><input type="checkbox" name="confirm" value="yes" required disabled', body)
         self.assertNotIn("{{", body)
 
     def test_map_control_queue_uses_catalog_allowlist(self):

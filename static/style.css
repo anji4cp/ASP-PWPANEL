@@ -525,6 +525,30 @@ body.admin-dashboard {
 .admin-dashboard .monitor-event, .admin-dashboard .audit-list li { border-color: #253246; }
 .admin-dashboard .backup-create-form, .admin-dashboard .boutique-form { padding: 18px; }
 .admin-dashboard .backup-last-action { margin: 14px 0; padding: 14px; }
+.game-control-state { display: flex; align-items: center; gap: 13px; margin: 20px 0 16px; padding: 15px 17px; color: #9aa8ba; background: #0d1724; border: 1px solid #29384c; border-radius: 7px; }
+.game-control-state .state-dot { flex: 0 0 auto; background: var(--admin-blue); box-shadow: 0 0 0 4px rgba(77, 142, 255, .11); }
+.game-control-state small { color: #718096; font-size: 9px; font-weight: 800; letter-spacing: .13em; }
+.game-control-state p { margin: 4px 0 0; overflow-wrap: anywhere; }
+.game-control-state strong { color: #f3c66c; }
+.game-control-state .countdown-critical { color: #ff7777; }
+.game-control-grid { display: grid; grid-template-columns: .82fr 1.18fr; gap: 16px; align-items: start; }
+.admin-dashboard .game-operation-form { display: grid; gap: 17px; height: 100%; padding: 21px; }
+.game-operation-form h3 { margin: 4px 0 7px; color: #edf2f8; font-size: 18px; }
+.game-operation-form p { margin: 0; color: #8492a5; font-size: 12px; line-height: 1.6; }
+.game-operation-form label { margin: 0; }
+.game-operation-form > small { margin: 0; color: #647287; text-align: left; }
+.broadcast-form { border-top: 2px solid var(--admin-blue) !important; }
+.safe-shutdown-form { border-top: 2px solid #e26969 !important; }
+.danger-kicker { color: #ef7b7b !important; }
+.shutdown-operation { display: grid; gap: 10px; }
+.shutdown-fields { display: grid; grid-template-columns: minmax(155px, .45fr) minmax(220px, 1fr); gap: 12px; }
+.cancel-shutdown-form { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0; padding: 13px 16px !important; }
+.cancel-shutdown-form .check-label { margin: 0; }
+.cancel-shutdown-form button { width: auto; min-width: 190px; }
+.cancel-shutdown-form button:disabled, .cancel-shutdown-form input:disabled { cursor: not-allowed; opacity: .45; }
+.game-control-last { margin-top: 16px; padding: 15px 17px; background: #0e1724; border-left: 2px solid var(--admin-gold); border-radius: 0 7px 7px 0; }
+.game-control-last p { margin: 8px 0 0; color: #8e9bad; overflow-wrap: anywhere; }
+.game-control-last strong { color: #e8edf4; }
 .admin-dashboard .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .admin-dashboard .compact-table { margin-top: 14px; }
 .admin-dashboard .table-wrap { border-color: #2a384d; border-radius: 7px; }
@@ -543,6 +567,7 @@ body.admin-dashboard {
 
 @media (max-width: 1180px) {
   .admin-two-column { grid-template-columns: 1fr; }
+  .game-control-grid { grid-template-columns: 1fr; }
   .admin-dashboard .map-option-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -567,6 +592,9 @@ body.admin-dashboard {
   .admin-card-header { align-items: flex-start; flex-direction: column; }
   .admin-status-summary { text-align: left; }
   .admin-dashboard .map-option-grid, .admin-dashboard .monitor-grid, .admin-dashboard .form-row, .admin-dashboard .news-admin-grid { grid-template-columns: 1fr; }
+  .shutdown-fields { grid-template-columns: 1fr; }
+  .cancel-shutdown-form { align-items: stretch; flex-direction: column; }
+  .cancel-shutdown-form button { width: 100%; }
   .admin-dashboard .map-control-actions { align-items: stretch; flex-direction: column; }
   .admin-dashboard .map-control-actions > div { width: 100%; flex-direction: column; }
   .admin-dashboard .map-control-actions button { width: 100%; }

@@ -20,6 +20,15 @@ class ProductSeparationTests(unittest.TestCase):
         installer = (ROOT / "installer" / "install-asp-pwpanel.sh").read_text(encoding="utf-8")
         self.assertIn("launcher-news.html", installer)
 
+    def test_game_control_worker_is_installed_as_separate_service(self):
+        installer = (ROOT / "installer" / "install-asp-pwpanel.sh").read_text(encoding="utf-8")
+        self.assertIn("game_control_worker.py", installer)
+        self.assertIn("pw155-game-control.service", installer)
+        self.assertIn("PW155_PROVIDER_PORT=29300", installer)
+        self.assertIn("PW155_WORLD_CHAT_OPCODE=120", installer)
+        monitor = (ROOT / "monitor_services.py").read_text(encoding="utf-8")
+        self.assertIn('("pw155-game-control.service", "Broadcast & Safe Shutdown")', monitor)
+
 
 if __name__ == "__main__":
     unittest.main()

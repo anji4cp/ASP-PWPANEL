@@ -40,6 +40,9 @@ CPW_CONTROL_DIR = Path(os.environ.get(
 BACKUP_CONTROL_DIR = Path(os.environ.get(
     "PW155_BACKUP_CONTROL_DIR", "/var/lib/pw155-backup-control"
 ))
+GAME_CONTROL_DIR = Path(os.environ.get(
+    "PW155_GAME_CONTROL_DIR", "/var/lib/pw155-game-control"
+))
 COIN_PACKAGES = {1_000_000, 5_000_000, 10_000_000, 50_000_000}
 UNSTUCK_COOLDOWN_MINUTES = 30
 USERNAME_RE = re.compile(r"^[A-Za-z0-9_]{3,20}$")
@@ -639,6 +642,100 @@ def queue_map_action(account, action, aliases, client_ip):
     return request
 
 
+def game_control_state():
+    """Read sanitized state from the root-side broadcast/shutdown worker."""
+    fallback = {
+        "updated_at": "Belum tersedia", "busy": False, "scheduled": None,
+        "last_action": None, "error": None,
+    }
+    try:
+        status = json.loads((GAME_CONTROL_DIR / "status.json").read_text(encoding="utf-8"))
+        if not isinstance(status, dict):
+            raise ValueError("Format status game control tidak valid")
+        scheduled = status.get("scheduled")
+        if scheduled is not None and not isinstance(scheduled, dict):
+            scheduled = None
+        if scheduled is not None:
+            try:
+                execute_at = max(0, int(scheduled.get("execute_at", 0)))
+            except (TypeError, ValueError):
+                scheduled = None
+            else:
+                scheduled = {
+                    "execute_at": execute_at,
+                    "reason": str(scheduled.get("reason", "Maintenance"))[:120],
+                    "actor": str(scheduled.get("actor", "admin"))[:20],
+                }
+        return {
+            "updated_at": str(status.get("updated_at", "-"))[:40],
+            "busy": bool(status.get("busy")),
+            "scheduled": scheduled,
+            "last_action": status.get("last_action")
+            if isinstance(status.get("last_action"), dict) else None,
+            "error": str(status.get("error"))[:1200] if status.get("error") else None,
+        }
+    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+        return fallback
+
+
+def queue_game_action(account, action, client_ip, message="", seconds=0, reason=""):
+    """Queue only broadcast, safe-shutdown, or cancellation requests."""
+    state = game_control_state()
+    if action not in ("broadcast", "schedule-shutdown", "cancel-shutdown"):
+        raise ValueError("Aksi game tidak valid")
+    if state["busy"]:
+        raise ValueError("Game control sedang memproses permintaan lain")
+    clean_message = str(message).strip()
+    clean_reason = str(reason).strip()
+    if action == "broadcast":
+        if not 1 <= len(clean_message) <= 200 or any(ord(char) < 32 for char in clean_message):
+            raise ValueError("Broadcast harus berisi 1–200 karakter tanpa baris baru")
+    elif action == "schedule-shutdown":
+        if state.get("scheduled"):
+            raise ValueError("Safe shutdown sudah dijadwalkan; batalkan jadwal sebelumnya")
+        if not isinstance(seconds, int) or not 10 <= seconds <= 86400:
+            raise ValueError("Hitung mundur harus antara 10 dan 86.400 detik")
+        if not 3 <= len(clean_reason) <= 120 or any(ord(char) < 32 for char in clean_reason):
+            raise ValueError("Alasan harus berisi 3–120 karakter tanpa baris baru")
+    elif not state.get("scheduled"):
+        raise ValueError("Tidak ada safe shutdown yang sedang dijadwalkan")
+    request_dir = GAME_CONTROL_DIR / "requests"
+    request_dir.mkdir(parents=True, exist_ok=True)
+    if next(request_dir.glob("*.json"), None) is not None:
+        raise ValueError("Permintaan game control sebelumnya masih dalam antrean")
+    request_id = secrets.token_hex(12)
+    request = {
+        "id": request_id, "action": action,
+        "actor_id": int(account[0]), "actor": str(account[1])[:20],
+        "client_ip": str(client_ip)[:45],
+        "requested_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+    if action == "broadcast":
+        request["message"] = clean_message
+    elif action == "schedule-shutdown":
+        request["seconds"] = seconds
+        request["reason"] = clean_reason
+    path = request_dir / f"{request_id}.json"
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        json.dump(request, handle, ensure_ascii=False, separators=(",", ":"))
+        handle.write("\n")
+    return request
+
+
+def record_game_control_audit(account, action, detail, client_ip):
+    """Best-effort portal audit; queuing must not be reversed if logging is unavailable."""
+    try:
+        run_db(
+            "INSERT INTO pw_portal.audit_log(actor_id,actor_username,action_name,target_id,"
+            "target_username,details,client_ip) VALUES ("
+            f"{int(account[0])},{sql_literal(account[1])},{sql_literal('server.' + action)},0,"
+            f"'realm',{sql_literal(str(detail)[:255])},{sql_literal(str(client_ip)[:45])});"
+        )
+    except (RuntimeError, subprocess.TimeoutExpired):
+        pass
+
+
 def backup_control_state():
     """Read only sanitized backup metadata prepared by the root worker."""
     fallback = {"busy": False, "updated_at": "Belum tersedia", "backups": [],
@@ -1160,7 +1257,7 @@ def render_panel(profile, characters, message="", level="", coin_orders=None):
 
 def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
                  editor=None, boutique_queue=None, maps=None, search="", message="", level="",
-                 backups=None, coin_orders=None):
+                 backups=None, coin_orders=None, game_control=None):
     template = (BASE_DIR / "admin.html").read_text(encoding="utf-8")
     token = new_csrf_token()
     monitor = support_monitor_state(monitor)
@@ -1361,6 +1458,34 @@ def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
         f'<div class="notice">{html.escape(str(backups.get("error")))}</div>'
         if backups.get("error") else ""
     )
+    game_control = game_control or game_control_state()
+    shutdown = game_control.get("scheduled")
+    if shutdown:
+        execute_at = max(0, int(shutdown.get("execute_at", 0)))
+        remaining = max(0, execute_at - int(time.time()))
+        game_control_state_label = "SHUTDOWN TERJADWAL"
+        game_control_detail = (
+            f'<strong data-shutdown-at="{execute_at}">{remaining} detik tersisa</strong> · '
+            f'{html.escape(str(shutdown.get("reason", "Maintenance")))} · '
+            f'oleh {html.escape(str(shutdown.get("actor", "admin")))}'
+        )
+        cancel_disabled = ""
+    else:
+        game_control_state_label = "SIAP"
+        game_control_detail = "Tidak ada safe shutdown yang dijadwalkan."
+        cancel_disabled = " disabled"
+    last_game_action = game_control.get("last_action")
+    game_control_last = (
+        f'<strong>{html.escape(str(last_game_action.get("actor", "admin")))}</strong> · '
+        f'{html.escape(str(last_game_action.get("action", "aksi")))} · '
+        f'<span>{html.escape(str(last_game_action.get("status", "unknown")))}</span> · '
+        f'{html.escape(str(last_game_action.get("message", "-")))}'
+        if last_game_action else "Belum ada broadcast atau safe shutdown dari panel."
+    )
+    game_control_error = (
+        f'<div class="notice">{html.escape(str(game_control.get("error")))}</div>'
+        if game_control.get("error") else ""
+    )
     replacements = {
         "{{NOTICE}}": notice_html(message, level),
         "{{CSRF}}": html.escape(token, quote=True),
@@ -1396,6 +1521,12 @@ def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
         "{{BACKUP_ROWS}}": "".join(backup_rows),
         "{{BACKUP_LAST_ACTION}}": backup_last_action,
         "{{BACKUP_ERROR}}": backup_error,
+        "{{GAME_CONTROL_STATE}}": html.escape(game_control_state_label),
+        "{{GAME_CONTROL_UPDATED}}": html.escape(str(game_control.get("updated_at", "-"))),
+        "{{GAME_CONTROL_DETAIL}}": game_control_detail,
+        "{{GAME_CONTROL_LAST}}": game_control_last,
+        "{{GAME_CONTROL_ERROR}}": game_control_error,
+        "{{GAME_CONTROL_CANCEL_DISABLED}}": cancel_disabled,
     }
     for key, value in replacements.items():
         template = template.replace(key, value)
@@ -1556,6 +1687,7 @@ class PWHandler(BaseHTTPRequestHandler):
             boutique_queue = boutique_pending()
             maps = map_control_state()
             backups = backup_control_state()
+            game_control = game_control_state()
             coin_orders = pending_coin_orders()
         except (RuntimeError, subprocess.TimeoutExpired, ValueError):
             self.send_error(HTTPStatus.SERVICE_UNAVAILABLE,
@@ -1564,7 +1696,7 @@ class PWHandler(BaseHTTPRequestHandler):
         body, token = render_admin(account, accounts, totals, audit_rows, monitor,
                                    news_items, editor, boutique_queue, maps,
                                    search, message, level, backups=backups,
-                                   coin_orders=coin_orders)
+                                   coin_orders=coin_orders, game_control=game_control)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
                             "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
@@ -1706,7 +1838,7 @@ class PWHandler(BaseHTTPRequestHandler):
                              "/admin/gm", "/admin/news/save", "/admin/news/status",
                              "/admin/boutique/grant", "/admin/coin/action",
                              "/admin/maps/action", "/admin/patch/action",
-                             "/admin/backups/create"):
+                             "/admin/backups/create", "/admin/game/action"):
             self.send_error(HTTPStatus.NOT_FOUND)
             return
         fields = self.read_form()
@@ -1742,6 +1874,8 @@ class PWHandler(BaseHTTPRequestHandler):
             self.handle_admin_patch_action(fields)
         elif self.path == "/admin/backups/create":
             self.handle_admin_backup_create(fields)
+        elif self.path == "/admin/game/action":
+            self.handle_admin_game_action(fields)
         else:
             self.handle_change_password(fields)
 
@@ -1973,6 +2107,55 @@ class PWHandler(BaseHTTPRequestHandler):
                      "tombol Download akan muncul setelah backup selesai."),
             level="success",
         )
+
+    def handle_admin_game_action(self, fields):
+        account = self.require_admin()
+        if not account:
+            return
+        action = fields.get("action", [""])[0]
+        message = fields.get("message", [""])[0].strip()
+        reason = fields.get("reason", [""])[0].strip()
+        seconds_text = fields.get("seconds", ["0"])[0].strip()
+        confirmed = fields.get("confirm", [""])[0] == "yes"
+        if action == "schedule-shutdown" and not confirmed:
+            self.send_admin(account, message="Centang konfirmasi sebelum menjadwalkan shutdown.",
+                            level="error")
+            return
+        if action == "cancel-shutdown" and not confirmed:
+            self.send_admin(account, message="Centang konfirmasi sebelum membatalkan shutdown.",
+                            level="error")
+            return
+        if action == "schedule-shutdown" and not seconds_text.isdigit():
+            self.send_admin(account, message="Hitung mundur harus berupa jumlah detik.",
+                            level="error")
+            return
+        seconds = int(seconds_text) if seconds_text.isdigit() else 0
+        try:
+            request = queue_game_action(
+                account, action, self.client_key(), message=message,
+                seconds=seconds, reason=reason,
+            )
+        except (OSError, ValueError) as error:
+            self.send_admin(account, message=f"Permintaan game control ditolak: {error}",
+                            level="error")
+            return
+        audit_details = {
+            "broadcast": f"mengirim broadcast: {message[:180]}",
+            "schedule-shutdown": f"menjadwalkan safe shutdown {seconds} detik: {reason[:150]}",
+            "cancel-shutdown": "membatalkan safe shutdown terjadwal",
+        }
+        record_game_control_audit(account, action, audit_details.get(action, action),
+                                  self.client_key())
+        labels = {
+            "broadcast": "Broadcast masuk antrean dan akan segera tampil di dalam game.",
+            "schedule-shutdown": (
+                f"Safe shutdown dijadwalkan dalam {request.get('seconds', seconds)} detik. "
+                "Pemain akan menerima pengumuman hitung mundur."
+            ),
+            "cancel-shutdown": "Permintaan pembatalan safe shutdown masuk antrean.",
+        }
+        self.send_admin(account, message=labels.get(action, "Permintaan masuk antrean."),
+                        level="success")
 
     def handle_admin_news_save(self, fields):
         account = self.require_admin()

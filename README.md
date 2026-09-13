@@ -17,6 +17,8 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
 - Responsive admin dashboard with sidebar navigation and PW-themed status cards
 - Boutique cash queue and character synchronization
 - Core service monitoring and map controls
+- In-game administrator broadcasts and persistent, cancellable safe-shutdown
+  countdowns that stop maps before core daemons
 - Optional link to an independently installed ASP CPW service
 - Admin-triggered database backups with protected download access
 
@@ -96,6 +98,30 @@ allowlisted request for a separate system worker, which creates and packages
 the backup. Default retention is 14 days and can be changed with
 `PW155_BACKUP_RETENTION_DAYS`.
 
+## In-game broadcast and Safe Shutdown
+
+1. Sign in as an administrator and open **Broadcast & Shutdown**.
+2. To notify all online players, enter a short message and select
+   **Send Broadcast**. It is sent as an anonymous system announcement: no GM
+   character name or automatic prefix is added.
+3. For maintenance, enter a countdown in seconds (10–86,400), provide a
+   reason, confirm the action, and select **Schedule Safe Shutdown**.
+4. The Ubuntu worker announces the countdown at useful intervals and every
+   second during the final ten seconds. At zero it calls the fixed
+   `pw155-service.sh stop-core` operation, which stops maps before the core
+   daemons.
+5. Before zero, use **Cancel Shutdown** to cancel the schedule and notify
+   players.
+
+The countdown is stored outside the web process, so closing the browser or
+restarting PWPanel does not lose it. The installer defaults to provider
+`127.0.0.1:29300`, provider `ChatBroadCast` opcode `120`, and channel `9`. The
+incoming player `PublicChat` opcode `79` is intentionally not used because the
+panel does not own an authenticated player session. If your legally
+operated server build differs, override `PW155_PROVIDER_HOST`,
+`PW155_PROVIDER_PORT`, or `PW155_WORLD_CHAT_OPCODE` in a systemd override for
+`pw155-game-control.service`. Test broadcast before scheduling maintenance.
+
 ## Downloads and CPW payloads
 
 Copy `downloads/manifest.example.json` to `downloads/manifest.json` and provide
@@ -109,7 +135,8 @@ python3 -m unittest discover -s tests -v
 ```
 
 The suite covers input validation, authorization, CSRF/session handling,
-service control queues, patch access, monitoring, and backup workers.
+service control queues, patch access, monitoring, backup workers, broadcast
+packet framing, and safe-shutdown execution.
 
 ## License
 

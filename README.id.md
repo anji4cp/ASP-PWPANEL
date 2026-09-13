@@ -18,6 +18,8 @@ Ubuntu.
 - Dashboard admin responsif dengan sidebar dan kartu status bernuansa PW
 - Antrean cash Boutique dan sinkronisasi karakter
 - Monitoring layanan inti dan kontrol map
+- Broadcast pengumuman di dalam game serta safe shutdown dengan hitung mundur
+  persisten dan dapat dibatalkan; map dihentikan sebelum daemon inti
 - Tautan opsional ke layanan ASP CPW yang dipasang secara terpisah
 - Backup database manual oleh admin dengan akses unduhan yang dilindungi
 
@@ -99,6 +101,31 @@ permintaan yang sudah dibatasi, lalu worker sistem terpisah membuat dan
 mengemas backup. Retensi default adalah 14 hari dan dapat diubah melalui
 `PW155_BACKUP_RETENTION_DAYS`.
 
+## Broadcast in-game dan Safe Shutdown
+
+1. Login sebagai administrator lalu buka **Broadcast & Shutdown**.
+2. Untuk mengumumkan sesuatu kepada seluruh pemain online, isi pesan singkat
+   lalu pilih **Kirim Broadcast**. Pesan dikirim sebagai pengumuman sistem
+   anonim tanpa nama karakter GM dan tanpa awalan otomatis.
+3. Untuk maintenance, masukkan hitung mundur dalam detik (10–86.400), isi
+   alasan, centang konfirmasi, lalu pilih **Jadwalkan Safe Shutdown**.
+4. Worker Ubuntu mengumumkan hitung mundur pada interval penting dan setiap
+   detik selama 10 detik terakhir. Ketika mencapai nol, worker menjalankan
+   operasi tetap `pw155-service.sh stop-core`, yang menghentikan map lebih dulu
+   lalu daemon inti.
+5. Sebelum mencapai nol, gunakan **Batalkan Shutdown** untuk membatalkan
+   jadwal dan memberi tahu pemain.
+
+Jadwal disimpan di luar proses web. Menutup browser atau me-restart PWPanel
+tidak menghilangkan hitung mundur. Nilai bawaan installer adalah provider
+`127.0.0.1:29300`, opcode provider `ChatBroadCast` `120`, dan channel `9`.
+Opcode `PublicChat` pemain `79` sengaja tidak dipakai karena panel tidak
+memiliki sesi pemain yang terautentikasi. Jika build server
+milik Anda berbeda, override `PW155_PROVIDER_HOST`, `PW155_PROVIDER_PORT`, atau
+`PW155_WORLD_CHAT_OPCODE` melalui systemd override untuk
+`pw155-game-control.service`. Uji broadcast dahulu sebelum menjadwalkan
+maintenance.
+
 ## Unduhan dan payload CPW
 
 Salin `downloads/manifest.example.json` menjadi `downloads/manifest.json`, lalu
@@ -112,7 +139,8 @@ python3 -m unittest discover -s tests -v
 ```
 
 Rangkaian test mencakup validasi input, otorisasi, CSRF/session, antrean kontrol
-layanan, akses patch, monitoring, dan worker backup.
+layanan, akses patch, monitoring, worker backup, framing paket broadcast, dan
+eksekusi safe shutdown.
 
 ## Lisensi
 
