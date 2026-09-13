@@ -17,7 +17,7 @@ Ubuntu.
 - Dashboard admin responsif dengan sidebar dan kartu status bernuansa PW
 - Antrean cash Boutique dan sinkronisasi karakter
 - Monitoring layanan inti dan kontrol map
-- Integrasi ASP CPW Patch Manager
+- Tautan opsional ke layanan ASP CPW yang dipasang secara terpisah
 - Backup database manual oleh admin dengan akses unduhan yang dilindungi
 
 ## Yang tidak disertakan
@@ -72,19 +72,18 @@ letakkan di belakang reverse proxy HTTPS. Jangan membuka HTTP server bawaan
 Python langsung ke internet. Batasi izin file database dan simpan semua folder
 worker/control di luar web root.
 
-## Instalasi dan update pada lingkungan PWKU
-
-Jika panel dipasang sebagai bagian dari lingkungan PWKU yang sudah dibuat:
+## Instalasi dan update
 
 1. Hidupkan VM/VPS Ubuntu dan pastikan SSH dapat diakses.
-2. Buka **ASP CPW Desktop** di Windows.
-3. Jalankan **Install / Update Server** satu kali setelah paket panel diperbarui.
-   Proses ini memasang atau memperbarui web, monitor, map-control, dan worker
-   backup.
-4. Buka Admin Panel dan periksa status layanan.
-5. Untuk setiap update client, gunakan urutan **Create Update -> Preview ->
-   Publish -> Verify** di ASP CPW. Update patch biasa tidak memerlukan instalasi
-   ulang panel.
+2. Klik dua kali [`ASP-PWPANEL-DESKTOP.cmd`](ASP-PWPANEL-DESKTOP.cmd).
+3. Isi alamat Ubuntu, port SSH, username SSH, dan URL panel, lalu simpan.
+4. Pilih **Test SSH**, kemudian **Install / Update**.
+5. Buka panel dan periksa kartu status layanan.
+
+Jalankan **Install / Update** satu kali untuk panel baru dan ulangi setelah
+menarik versi ASP PWPanel yang lebih baru. Aplikasi tidak menyimpan password
+SSH. ASP CPW adalah produk opsional yang terpisah; installer ini tidak pernah
+memasang atau memperbarui ASP CPW.
 
 ## Backup database dari Admin Panel
 

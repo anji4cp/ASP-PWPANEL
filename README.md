@@ -16,7 +16,7 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
 - Responsive admin dashboard with sidebar navigation and PW-themed status cards
 - Boutique cash queue and character synchronization
 - Core service monitoring and map controls
-- ASP CPW Patch Manager integration
+- Optional link to an independently installed ASP CPW service
 - Admin-triggered database backups with protected download access
 
 ## What is not included
@@ -70,17 +70,17 @@ HTTPS reverse proxy. Do not expose Python's built-in HTTP server directly to
 the public internet. Restrict the database file to its service account and
 keep all worker/control directories outside the web root.
 
-## PWKU installation and updates
-
-If this panel is installed as part of the existing PWKU environment:
+## Installation and updates
 
 1. Start the Ubuntu VM/VPS and verify SSH access.
-2. Open **ASP CPW Desktop** on Windows.
-3. Run **Install / Update Server** once after updating the panel package. This
-   installs or refreshes the web, monitor, map-control, and backup workers.
-4. Open the Admin Panel and verify service status.
-5. For every client update, use **Create Update -> Preview -> Publish -> Verify**
-   in ASP CPW. Reinstalling the panel is not required for ordinary patch files.
+2. Double-click [`ASP-PWPANEL-DESKTOP.cmd`](ASP-PWPANEL-DESKTOP.cmd).
+3. Enter the Ubuntu address, SSH port, SSH username, and panel URL, then save.
+4. Select **Test SSH**, followed by **Install / Update**.
+5. Open the panel and verify the service cards.
+
+Run **Install / Update** once for a new panel and again after pulling a newer
+ASP PWPanel version. The application never stores SSH passwords. ASP CPW is a
+separate optional product; this installer never installs or updates it.
 
 ## Database backup from Admin Panel
 
