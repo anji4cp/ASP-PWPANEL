@@ -10,6 +10,7 @@ Ubuntu.
 ## Fitur
 
 - Pendaftaran, login, panel akun, ranking, berita, dan unduhan pemain
+- Endpoint berita `/launcher-news` untuk browser lama di Launcher Perfect World
 - Permintaan pembelian coin dengan antrean verifikasi administrator
 - Pemulihan karakter tersangkut ke titik aman tetap (wajib offline, kepemilikan
   diperiksa, memakai cooldown, dan tercatat di audit)

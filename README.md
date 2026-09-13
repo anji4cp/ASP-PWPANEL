@@ -9,6 +9,7 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
 ## Features
 
 - Player registration, sign-in, account panel, rankings, news, and downloads
+- Legacy-browser news endpoint at `/launcher-news` for the Perfect World launcher
 - Player coin-purchase requests with an administrator verification queue
 - Self-service stuck-character recovery to a fixed safe point (offline only,
   ownership checked, cooldown enforced, and audited)

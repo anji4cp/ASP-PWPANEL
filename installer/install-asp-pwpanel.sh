@@ -24,7 +24,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends python3 mariadb-server mariadb-client openssl ca-certificates curl
 
-for required in app.py sync_characters.py gm_position.py role_operations.py monitor_services.py map_control_worker.py backup_control_worker.py pw155-backup-db.sh index.html login.html panel.html admin.html ranking.html news.html guide.html downloads.html patch_manager.html static/style.css static/app.js; do
+for required in app.py sync_characters.py gm_position.py role_operations.py monitor_services.py map_control_worker.py backup_control_worker.py pw155-backup-db.sh index.html login.html panel.html admin.html ranking.html news.html launcher-news.html guide.html downloads.html patch_manager.html static/style.css static/launcher-news.css static/app.js; do
   if [[ ! -f "$source_dir/$required" ]]; then
     echo "File sumber tidak lengkap: $required" >&2
     exit 1
@@ -73,9 +73,11 @@ install -o root -g root -m 0644 "$source_dir/admin.html" "$install_dir/admin.htm
 install -o root -g root -m 0644 "$source_dir/patch_manager.html" "$install_dir/patch_manager.html"
 install -o root -g root -m 0644 "$source_dir/ranking.html" "$install_dir/ranking.html"
 install -o root -g root -m 0644 "$source_dir/news.html" "$install_dir/news.html"
+install -o root -g root -m 0644 "$source_dir/launcher-news.html" "$install_dir/launcher-news.html"
 install -o root -g root -m 0644 "$source_dir/guide.html" "$install_dir/guide.html"
 install -o root -g root -m 0644 "$source_dir/downloads.html" "$install_dir/downloads.html"
 install -o root -g root -m 0644 "$source_dir/static/style.css" "$install_dir/static/style.css"
+install -o root -g root -m 0644 "$source_dir/static/launcher-news.css" "$install_dir/static/launcher-news.css"
 install -o root -g root -m 0644 "$source_dir/static/app.js" "$install_dir/static/app.js"
 if [[ -f "$source_dir/downloads/manifest.json" ]]; then
   install -o root -g root -m 0644 "$source_dir/downloads/manifest.json" "$install_dir/downloads/manifest.json"

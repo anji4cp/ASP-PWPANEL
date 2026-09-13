@@ -383,6 +383,16 @@ class ValidationTests(unittest.TestCase):
         self.assertNotIn("<script>", body)
         self.assertNotIn("{{", body)
 
+    def test_launcher_news_uses_legacy_compatible_markup(self):
+        body = app.render_launcher_news([{
+            "id": "1", "title": "Server Update", "body": "New event is available.",
+            "date": "2026-09-13", "author": "admin",
+        }])
+        self.assertIn("Server Update", body)
+        self.assertIn("launcher-news.css", body)
+        self.assertNotIn("{{", body)
+        self.assertNotIn("<script", body.lower())
+
     def test_news_status_rejects_invalid_value_before_database(self):
         with patch.object(app, "run_db") as query:
             with self.assertRaises(ValueError):

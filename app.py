@@ -982,6 +982,26 @@ def render_news(news_items):
     return template.replace("{{NEWS_CARDS}}", "".join(cards))
 
 
+def render_launcher_news(news_items):
+    """Render a no-JavaScript page for the launcher's legacy IE browser control."""
+    template = (BASE_DIR / "launcher-news.html").read_text(encoding="utf-8")
+    rows = []
+    for position, item in enumerate(news_items[:6]):
+        plain_body = " ".join(str(item["body"]).split())
+        if len(plain_body) > 240:
+            plain_body = plain_body[:237].rstrip() + "..."
+        rows.append(
+            f'<div class="news-item {"first" if position == 0 else ""}">'
+            f'<span class="news-date">{html.escape(format_news_date(item["date"]))}</span>'
+            f'<h2 class="news-title">{html.escape(item["title"])}</h2>'
+            f'<p class="news-body">{html.escape(plain_body)}</p></div>'
+        )
+    if not rows:
+        rows.append('<div class="empty"><strong>No published news yet.</strong><br>'
+                    'Updates will appear here after an administrator publishes them.</div>')
+    return template.replace("{{LAUNCHER_NEWS}}", "".join(rows))
+
+
 def load_download_manifest():
     """Load public metadata without trusting filenames from the request path."""
     try:
@@ -1593,14 +1613,18 @@ class PWHandler(BaseHTTPRequestHandler):
             body = json.dumps(load_download_manifest(), separators=(",", ":")).encode()
             self.send_bytes(HTTPStatus.OK, body, "application/json; charset=utf-8")
             return
-        if path == "/news":
+        if path in ("/news", "/launcher-news"):
             try:
-                body = render_news(published_news()).encode("utf-8")
+                agent = self.headers.get("User-Agent", "")
+                legacy_launcher = path == "/launcher-news" or "MSIE" in agent or "Trident/" in agent
+                items = published_news(6 if legacy_launcher else 20)
+                body = (render_launcher_news(items) if legacy_launcher else render_news(items)).encode("utf-8")
             except (RuntimeError, subprocess.TimeoutExpired, ValueError):
                 self.send_error(HTTPStatus.SERVICE_UNAVAILABLE,
                                 "Berita sedang tidak tersedia")
                 return
-            self.send_bytes(HTTPStatus.OK, body, "text/html; charset=utf-8")
+            headers = {"X-UA-Compatible": "IE=edge"} if legacy_launcher else None
+            self.send_bytes(HTTPStatus.OK, body, "text/html; charset=utf-8", headers)
             return
         if path == "/guide":
             template = BASE_DIR / f"{path[1:]}.html"
@@ -1663,7 +1687,7 @@ class PWHandler(BaseHTTPRequestHandler):
             else:
                 self.send_backup_download(account, path.rsplit("/", 1)[1])
             return
-        if path in ("/static/style.css", "/static/app.js"):
+        if path in ("/static/style.css", "/static/launcher-news.css", "/static/app.js"):
             filename = path.rsplit("/", 1)[1]
             content_type = "text/css; charset=utf-8" if filename.endswith(".css") else "text/javascript; charset=utf-8"
             body = (STATIC_DIR / filename).read_bytes()
