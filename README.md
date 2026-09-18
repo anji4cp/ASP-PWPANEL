@@ -19,6 +19,8 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
 - Core service monitoring and map controls
 - In-game administrator broadcasts and persistent, cancellable safe-shutdown
   countdowns that stop maps before core daemons
+- Realm EXP rates (x1–x10), monster gold (x1/x2), and system-mail delivery of
+  ordinary materials from the verified baseline catalog
 - Optional link to an independently installed ASP CPW service
 - Admin-triggered database backups with protected download access
 
@@ -115,12 +117,25 @@ the backup. Default retention is 14 days and can be changed with
 
 The countdown is stored outside the web process, so closing the browser or
 restarting PWPanel does not lose it. The installer defaults to provider
-`127.0.0.1:29300`, provider `ChatBroadCast` opcode `120`, and channel `9`. The
+`127.0.0.1:29300` for broadcasts and delivery/iWeb `127.0.0.1:29100` for rate
+and item-mail operations. The provider `ChatBroadCast` opcode is `120` and the
+channel is `9`. The
 incoming player `PublicChat` opcode `79` is intentionally not used because the
 panel does not own an authenticated player session. If your legally
 operated server build differs, override `PW155_PROVIDER_HOST`,
-`PW155_PROVIDER_PORT`, or `PW155_WORLD_CHAT_OPCODE` in a systemd override for
+`PW155_PROVIDER_PORT`, `PW155_DELIVERY_HOST`, `PW155_DELIVERY_PORT`, or
+`PW155_WORLD_CHAT_OPCODE` in a systemd override for
 `pw155-game-control.service`. Test broadcast before scheduling maintenance.
+
+## Rates and material delivery
+
+The administrator can set the supported EXP and gold multipliers from
+**Rate & Item**. Material delivery accepts a character, item ID, and stack
+count. Only baseline `MATERIAL_ESSENCE` entries with `proc_type=0` are allowed;
+the worker checks the server's `elements.data` hash before sending. Equipment,
+unknown items, and counts beyond the stack limit are rejected. An
+`mail-accepted` result confirms that the server accepted the message, not that
+the player claimed its attachment. Check the in-game mailbox and inventory.
 
 ## Downloads and CPW payloads
 

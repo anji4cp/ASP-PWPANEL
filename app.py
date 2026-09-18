@@ -293,6 +293,32 @@ def admin_totals():
     return int(total_accounts), int(total_characters), int(total_gm)
 
 
+def admin_characters(limit=500):
+    rows = run_db(
+        "SELECT r.role_id,r.role_name,u.name FROM pw.roles r "
+        "JOIN pw.users u ON u.ID=r.account_id "
+        f"ORDER BY r.role_name LIMIT {min(max(int(limit), 1), 1000)};"
+    )
+    result = []
+    for row in rows:
+        role_id, role_name, username = row.split("\t", 2)
+        result.append({"role_id": int(role_id), "name": role_name,
+                       "username": username})
+    return result
+
+
+def admin_character(role_id):
+    rows = run_db(
+        "SELECT r.role_id,r.role_name,u.name FROM pw.roles r "
+        "JOIN pw.users u ON u.ID=r.account_id "
+        f"WHERE r.role_id={int(role_id)} LIMIT 1;"
+    )
+    if not rows:
+        return None
+    found_id, role_name, username = rows[0].split("\t", 2)
+    return {"role_id": int(found_id), "name": role_name, "username": username}
+
+
 def admin_audit(limit=30):
     rows = run_db(
         "SELECT DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), actor_username, "
@@ -646,7 +672,7 @@ def game_control_state():
     """Read sanitized state from the root-side broadcast/shutdown worker."""
     fallback = {
         "updated_at": "Belum tersedia", "busy": False, "scheduled": None,
-        "last_action": None, "error": None,
+        "last_action": None, "error": None, "rates": {"exp": 1, "gold": 1},
     }
     try:
         status = json.loads((GAME_CONTROL_DIR / "status.json").read_text(encoding="utf-8"))
@@ -673,15 +699,22 @@ def game_control_state():
             "last_action": status.get("last_action")
             if isinstance(status.get("last_action"), dict) else None,
             "error": str(status.get("error"))[:1200] if status.get("error") else None,
+            "rates": {
+                "exp": int(status.get("rates", {}).get("exp", 1)),
+                "gold": int(status.get("rates", {}).get("gold", 1)),
+            } if isinstance(status.get("rates"), dict) else {"exp": 1, "gold": 1},
         }
     except (OSError, ValueError, TypeError, json.JSONDecodeError):
         return fallback
 
 
-def queue_game_action(account, action, client_ip, message="", seconds=0, reason=""):
-    """Queue only broadcast, safe-shutdown, or cancellation requests."""
+def queue_game_action(account, action, client_ip, message="", seconds=0, reason="",
+                      exp_multiplier=1, gold_multiplier=1, role_id=0, item_id=0,
+                      count=1, proctype=0):
+    """Queue validated realm, announcement, shutdown, and material actions."""
     state = game_control_state()
-    if action not in ("broadcast", "schedule-shutdown", "cancel-shutdown"):
+    if action not in ("broadcast", "schedule-shutdown", "cancel-shutdown",
+                      "set-rates", "send-item"):
         raise ValueError("Aksi game tidak valid")
     if state["busy"]:
         raise ValueError("Game control sedang memproses permintaan lain")
@@ -697,8 +730,39 @@ def queue_game_action(account, action, client_ip, message="", seconds=0, reason=
             raise ValueError("Hitung mundur harus antara 10 dan 86.400 detik")
         if not 3 <= len(clean_reason) <= 120 or any(ord(char) < 32 for char in clean_reason):
             raise ValueError("Alasan harus berisi 3–120 karakter tanpa baris baru")
-    elif not state.get("scheduled"):
-        raise ValueError("Tidak ada safe shutdown yang sedang dijadwalkan")
+    elif action == "cancel-shutdown":
+        if not state.get("scheduled"):
+            raise ValueError("Tidak ada safe shutdown yang sedang dijadwalkan")
+    elif action == "set-rates":
+        if exp_multiplier not in {1, 2, 3, 4, 5, 6, 8, 10}:
+            raise ValueError("Multiplier EXP tidak didukung")
+        if gold_multiplier not in {1, 2}:
+            raise ValueError("Multiplier gold harus x1 atau x2")
+    elif action == "send-item":
+        if type(role_id) is not int or not 0 < role_id <= 0x7FFFFFFF:
+            raise ValueError("Role ID tidak valid")
+        if type(item_id) is not int or type(count) is not int or proctype != 0:
+            raise ValueError("Item ID, jumlah, atau proctype tidak valid")
+        try:
+            catalog = json.loads(Path(__file__).with_name("material_catalog.json").read_text(
+                encoding="utf-8"))
+        except (OSError, ValueError, json.JSONDecodeError):
+            raise ValueError("Katalog material tidak tersedia") from None
+        if (not isinstance(catalog, dict) or catalog.get("version") != 156
+                or catalog.get("category") != "MATERIAL_ESSENCE"
+                or catalog.get("elements_sha256") !=
+                "db4dcd45fb2d77ea845e8e859f1874024b11836bf459119003d0b7b620235c97"
+                or not isinstance(catalog.get("items"), dict)):
+            raise ValueError("Katalog material tidak cocok")
+        entry = catalog["items"].get(str(item_id))
+        if not isinstance(entry, dict):
+            raise ValueError("ID ini bukan material yang didukung; equipment belum tersedia")
+        max_count = entry.get("max_count")
+        if (type(max_count) is not int or not 1 <= max_count <= 32767
+                or entry.get("proctype") != 0):
+            raise ValueError("Definisi jumlah maksimum material tidak valid")
+        if not 1 <= count <= min(max_count, 9999):
+            raise ValueError(f"Jumlah material harus 1 sampai {min(max_count, 9999)}")
     request_dir = GAME_CONTROL_DIR / "requests"
     request_dir.mkdir(parents=True, exist_ok=True)
     if next(request_dir.glob("*.json"), None) is not None:
@@ -715,6 +779,14 @@ def queue_game_action(account, action, client_ip, message="", seconds=0, reason=
     elif action == "schedule-shutdown":
         request["seconds"] = seconds
         request["reason"] = clean_reason
+    elif action == "set-rates":
+        request["exp_multiplier"] = int(exp_multiplier)
+        request["gold_multiplier"] = int(gold_multiplier)
+    elif action == "send-item":
+        request["role_id"] = role_id
+        request["item_id"] = item_id
+        request["count"] = count
+        request["proctype"] = 0
     path = request_dir / f"{request_id}.json"
     descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640)
     with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
@@ -1257,7 +1329,7 @@ def render_panel(profile, characters, message="", level="", coin_orders=None):
 
 def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
                  editor=None, boutique_queue=None, maps=None, search="", message="", level="",
-                 backups=None, coin_orders=None, game_control=None):
+                 backups=None, coin_orders=None, game_control=None, characters=None):
     template = (BASE_DIR / "admin.html").read_text(encoding="utf-8")
     token = new_csrf_token()
     monitor = support_monitor_state(monitor)
@@ -1459,6 +1531,24 @@ def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
         if backups.get("error") else ""
     )
     game_control = game_control or game_control_state()
+    rates = game_control.get("rates", {})
+    exp_rate = int(rates.get("exp", 1)) if isinstance(rates, dict) else 1
+    gold_rate = int(rates.get("gold", 1)) if isinstance(rates, dict) else 1
+    exp_options = "".join(
+        f'<option value="{value}"{" selected" if value == exp_rate else ""}>x{value}</option>'
+        for value in (1, 2, 3, 4, 5, 6, 8, 10)
+    )
+    gold_options = "".join(
+        f'<option value="{value}"{" selected" if value == gold_rate else ""}>x{value}</option>'
+        for value in (1, 2)
+    )
+    character_options = "".join(
+        f'<option value="{int(item["role_id"])}">{html.escape(str(item["name"]))} '
+        f'· {html.escape(str(item["username"]))} · #{int(item["role_id"])}</option>'
+        for item in (characters or [])
+    )
+    if not character_options:
+        character_options = '<option value="">Belum ada karakter tersinkron</option>'
     shutdown = game_control.get("scheduled")
     if shutdown:
         execute_at = max(0, int(shutdown.get("execute_at", 0)))
@@ -1527,6 +1617,11 @@ def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
         "{{GAME_CONTROL_LAST}}": game_control_last,
         "{{GAME_CONTROL_ERROR}}": game_control_error,
         "{{GAME_CONTROL_CANCEL_DISABLED}}": cancel_disabled,
+        "{{EXP_RATE}}": str(exp_rate),
+        "{{GOLD_RATE}}": str(gold_rate),
+        "{{EXP_RATE_OPTIONS}}": exp_options,
+        "{{GOLD_RATE_OPTIONS}}": gold_options,
+        "{{ADMIN_CHARACTER_OPTIONS}}": character_options,
     }
     for key, value in replacements.items():
         template = template.replace(key, value)
@@ -1689,6 +1784,7 @@ class PWHandler(BaseHTTPRequestHandler):
             backups = backup_control_state()
             game_control = game_control_state()
             coin_orders = pending_coin_orders()
+            characters = admin_characters()
         except (RuntimeError, subprocess.TimeoutExpired, ValueError):
             self.send_error(HTTPStatus.SERVICE_UNAVAILABLE,
                             "Admin panel sedang tidak tersedia")
@@ -1696,7 +1792,8 @@ class PWHandler(BaseHTTPRequestHandler):
         body, token = render_admin(account, accounts, totals, audit_rows, monitor,
                                    news_items, editor, boutique_queue, maps,
                                    search, message, level, backups=backups,
-                                   coin_orders=coin_orders, game_control=game_control)
+                                   coin_orders=coin_orders, game_control=game_control,
+                                   characters=characters)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
                             "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
@@ -1838,7 +1935,8 @@ class PWHandler(BaseHTTPRequestHandler):
                              "/admin/gm", "/admin/news/save", "/admin/news/status",
                              "/admin/boutique/grant", "/admin/coin/action",
                              "/admin/maps/action", "/admin/patch/action",
-                             "/admin/backups/create", "/admin/game/action"):
+                             "/admin/backups/create", "/admin/game/action",
+                             "/admin/game/rates", "/admin/game/item"):
             self.send_error(HTTPStatus.NOT_FOUND)
             return
         fields = self.read_form()
@@ -1876,6 +1974,10 @@ class PWHandler(BaseHTTPRequestHandler):
             self.handle_admin_backup_create(fields)
         elif self.path == "/admin/game/action":
             self.handle_admin_game_action(fields)
+        elif self.path == "/admin/game/rates":
+            self.handle_admin_game_rates(fields)
+        elif self.path == "/admin/game/item":
+            self.handle_admin_game_item(fields)
         else:
             self.handle_change_password(fields)
 
@@ -2156,6 +2258,80 @@ class PWHandler(BaseHTTPRequestHandler):
         }
         self.send_admin(account, message=labels.get(action, "Permintaan masuk antrean."),
                         level="success")
+
+    def handle_admin_game_rates(self, fields):
+        account = self.require_admin()
+        if not account:
+            return
+        exp_text = fields.get("exp_multiplier", [""])[0].strip()
+        gold_text = fields.get("gold_multiplier", [""])[0].strip()
+        if fields.get("confirm", [""])[0] != "yes":
+            self.send_admin(account, message="Centang konfirmasi sebelum mengubah rate game.",
+                            level="error")
+            return
+        if not exp_text.isdigit() or not gold_text.isdigit():
+            self.send_admin(account, message="Rate EXP atau gold tidak valid.", level="error")
+            return
+        exp_multiplier, gold_multiplier = int(exp_text), int(gold_text)
+        try:
+            queue_game_action(
+                account, "set-rates", self.client_key(),
+                exp_multiplier=exp_multiplier, gold_multiplier=gold_multiplier,
+            )
+        except (OSError, ValueError) as error:
+            self.send_admin(account, message=f"Perubahan rate ditolak: {error}", level="error")
+            return
+        record_game_control_audit(
+            account, "set-rates",
+            f"mengatur rate EXP x{exp_multiplier} dan gold x{gold_multiplier}",
+            self.client_key(),
+        )
+        self.send_admin(
+            account,
+            message=(f"Perubahan EXP x{exp_multiplier} dan gold x{gold_multiplier} "
+                     "masuk antrean."),
+            level="success",
+        )
+
+    def handle_admin_game_item(self, fields):
+        account = self.require_admin()
+        if not account:
+            return
+        if fields.get("confirm", [""])[0] != "yes":
+            self.send_admin(account, message="Centang konfirmasi pengiriman material.",
+                            level="error")
+            return
+        role_text = fields.get("role_id", [""])[0].strip()
+        item_text = fields.get("item_id", [""])[0].strip()
+        count_text = fields.get("count", ["1"])[0].strip()
+        if not all(value.isdigit() for value in (role_text, item_text, count_text)):
+            self.send_admin(account, message="Role ID, item ID, atau jumlah tidak valid.",
+                            level="error")
+            return
+        role_id, item_id, count = int(role_text), int(item_text), int(count_text)
+        try:
+            character = admin_character(role_id)
+            if not character:
+                raise ValueError("Karakter tidak ditemukan pada cache panel")
+            queue_game_action(
+                account, "send-item", self.client_key(),
+                role_id=role_id, item_id=item_id, count=count,
+            )
+        except (RuntimeError, subprocess.TimeoutExpired, OSError, ValueError) as error:
+            self.send_admin(account, message=f"Pengiriman material ditolak: {error}",
+                            level="error")
+            return
+        record_game_control_audit(
+            account, "send-item",
+            f"meminta material {item_id} x{count} untuk {character['name']} (role {role_id})",
+            self.client_key(),
+        )
+        self.send_admin(
+            account,
+            message=(f"Material {item_id} x{count} masuk antrean surat untuk "
+                     f"{character['name']}. Periksa aksi terakhir dan pengambilan di tas."),
+            level="success",
+        )
 
     def handle_admin_news_save(self, fields):
         account = self.require_admin()

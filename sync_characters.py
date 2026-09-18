@@ -23,6 +23,10 @@ class ProtocolError(RuntimeError):
     pass
 
 
+class UserRolesNotFound(ProtocolError):
+    pass
+
+
 def encode_cuint(value):
     if value < 0:
         raise ValueError("CUInt tidak menerima nilai negatif")
@@ -141,6 +145,10 @@ def user_roles(account_id):
     reader = Reader(payload)
     reader.u32()  # handle/request id
     retcode = reader.u32()
+    if retcode == 60:
+        # The gamedbd log reports NOTFOUND for an account with no GameDB
+        # record yet (for example, a retained login after a world reset).
+        raise UserRolesNotFound(f"GetUserRoles userid={account_id} NOTFOUND")
     if retcode != 0:
         raise ProtocolError(f"GetUserRoles retcode={retcode}")
     count = reader.cuint()
@@ -212,9 +220,33 @@ def role_base(role_id):
     }
 
 
+def cached_role_count(account_id):
+    query = f"SELECT COUNT(*) FROM pw.roles WHERE account_id={int(account_id)};"
+    result = subprocess.run(
+        ["/usr/bin/mariadb", f"--defaults-extra-file={DB_CONFIG}",
+         "--batch", "--skip-column-names"], input=query, text=True,
+        capture_output=True, timeout=5, check=False)
+    if result.returncode != 0:
+        raise RuntimeError("Tidak dapat membaca cache karakter")
+    try:
+        return int(result.stdout.strip())
+    except ValueError as error:
+        raise RuntimeError("Jumlah cache karakter tidak valid") from error
+
+
 def fetch_account(account_id):
     characters = []
-    for role in user_roles(account_id):
+    try:
+        roles = user_roles(account_id)
+    except UserRolesNotFound as error:
+        # Do not silently erase an existing cache if a previously populated
+        # GameDB account disappears unexpectedly.
+        if cached_role_count(account_id):
+            raise ProtocolError(
+                f"GameDB userid={account_id} NOTFOUND tetapi cache masih berisi karakter"
+            ) from error
+        return []
+    for role in roles:
         detail = role_base(role["role_id"])
         if detail["base_name"] and detail["base_name"] != role["role_name"]:
             raise ProtocolError("Nama karakter berbeda antara dua respons")

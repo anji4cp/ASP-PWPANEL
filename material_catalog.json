@@ -1,0 +1,3263 @@
+{
+  "version": 156,
+  "category": "MATERIAL_ESSENCE",
+  "elements_sha256": "db4dcd45fb2d77ea845e8e859f1874024b11836bf459119003d0b7b620235c97",
+  "items": {
+    "399": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "501": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "503": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "506": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "508": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "510": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "511": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "513": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "514": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "515": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "516": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "517": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "518": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "519": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "520": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "521": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "522": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "523": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "524": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "525": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "527": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "528": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "529": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "530": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "531": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "532": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "533": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "534": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "535": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "536": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "542": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "543": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "544": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "545": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "546": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "548": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "549": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "550": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "551": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "552": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "553": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "554": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "555": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "556": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "557": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "558": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "559": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "560": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "561": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "562": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "563": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "564": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "565": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "566": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "567": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "569": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "570": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "571": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "572": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "573": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "574": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "575": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "576": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "577": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "578": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "580": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "581": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "582": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "583": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "584": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "585": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "586": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "587": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "588": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "589": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "590": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "591": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "592": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "593": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "594": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "596": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "597": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "598": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "599": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "600": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "601": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "602": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "603": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "604": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "605": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "606": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "607": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "608": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "609": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "610": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "611": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "612": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "613": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "614": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "615": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "619": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "620": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "621": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "622": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "623": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "624": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "625": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "626": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "627": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "628": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "629": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "630": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "631": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "632": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "633": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "635": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "636": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "637": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "638": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "639": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "640": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "641": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "642": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "643": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "644": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "666": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "668": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "672": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "673": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "675": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "678": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "679": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "680": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "681": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "682": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "683": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "684": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "685": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "686": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "687": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "688": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "689": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "690": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "691": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "692": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "694": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "695": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "696": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "697": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "698": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "699": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "700": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "701": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "702": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "703": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "705": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "706": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "707": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "708": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "709": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "711": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "712": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "713": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "714": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "715": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "720": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "721": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "722": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "723": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "724": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "725": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "726": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "727": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "728": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "729": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "730": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "731": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "732": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "733": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "734": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "735": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "736": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "737": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "738": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "739": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "740": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "741": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "742": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "743": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "744": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "745": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "746": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "747": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "748": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "749": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "750": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "751": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "752": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "753": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "754": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "756": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "757": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "758": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "759": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "760": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "771": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "772": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "773": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "774": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "775": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "776": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "777": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "778": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "779": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "780": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "781": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "782": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "783": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "784": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "785": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "971": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "972": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "973": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "974": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "975": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "976": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "977": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "978": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "979": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "980": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "981": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "982": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "983": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "984": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "985": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "1820": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1821": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1823": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1824": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1825": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1826": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1827": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1828": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1830": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "1831": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "1832": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "1834": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1835": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1837": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1838": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1839": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1840": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1841": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1842": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1844": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "1845": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "1846": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "1848": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1850": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1851": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1852": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1854": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1855": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "1857": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2019": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2020": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2021": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2026": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2027": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2028": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2029": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2030": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2031": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2032": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2033": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "2034": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "3067": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "3068": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "3070": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "3071": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "3072": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "4095": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4096": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4097": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4098": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4099": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4100": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4101": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4102": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4103": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4105": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4108": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4109": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4111": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4115": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4116": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4118": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4119": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4120": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4121": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4122": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4123": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4124": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4125": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4126": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4127": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4128": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4129": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4130": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4131": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4132": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4133": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4134": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4135": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "4143": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4144": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4147": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4148": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4149": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4150": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4213": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4324": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "4325": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "4326": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "4327": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "4328": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "4418": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4419": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4420": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4421": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4422": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4423": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4424": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4425": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4426": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4427": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "4428": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6754": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6755": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6756": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6757": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6758": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6759": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6760": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6761": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6762": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6763": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6764": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6765": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "6912": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "6913": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "6914": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "6915": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "6916": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "6917": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "6918": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "8048": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8049": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8050": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8051": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8052": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8053": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8054": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8055": {
+      "max_count": 500,
+      "proctype": 0
+    },
+    "8079": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8080": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8081": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8082": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8083": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8084": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8085": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8086": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8087": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8088": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8090": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8091": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8092": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8093": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8094": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8095": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8096": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8097": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8098": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8099": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8101": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8102": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8103": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8104": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8105": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8106": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8107": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8108": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8109": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8110": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8112": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8113": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8114": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8115": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8116": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8117": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8118": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8119": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8120": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8121": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8123": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8124": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8125": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8126": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8127": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8128": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8129": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8130": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8131": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8132": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8134": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8135": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8136": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8137": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8138": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8139": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8140": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8141": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8142": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8144": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8145": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8146": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8147": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8148": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8149": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8150": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8151": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8152": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8154": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8155": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8156": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8157": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8158": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8159": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8160": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8161": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8162": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8164": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8165": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8166": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8167": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8168": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8169": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8170": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8171": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8172": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8174": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8175": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8176": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8177": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8178": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8179": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8180": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8181": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8182": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8183": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8184": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8186": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8187": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8188": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8189": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8190": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8191": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8192": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8193": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8194": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8195": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "8197": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8198": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8199": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8200": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8201": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8202": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8203": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8204": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8269": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "8799": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "8800": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "8801": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "9831": {
+      "max_count": 10,
+      "proctype": 0
+    },
+    "9968": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "9969": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "12753": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12754": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12755": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12756": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12757": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12829": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12830": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12831": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12832": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "12985": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12986": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12987": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12988": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12989": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12990": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12991": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12992": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12993": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12994": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12995": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12996": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12997": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12998": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "12999": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13000": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13001": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13002": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13003": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13004": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13005": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13006": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13007": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13008": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13009": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13010": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13011": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13012": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13013": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13014": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13015": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13016": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13017": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13018": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13019": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13020": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13021": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13022": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13023": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13024": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13025": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13026": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13027": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13028": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13029": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13030": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13031": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13032": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13033": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13034": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13035": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13036": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13037": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13038": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13039": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13040": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13041": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13042": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13043": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13044": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13045": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13046": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13047": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13048": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13049": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13050": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13051": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13052": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13053": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13054": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13055": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13056": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13057": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13058": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13059": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13060": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13061": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13062": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13063": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13064": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13065": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13066": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13067": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13068": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13069": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13070": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13071": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13072": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13073": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13074": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13075": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13076": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13077": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13078": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13079": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13080": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13081": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13082": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13083": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13084": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13085": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13086": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13087": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13088": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13089": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13090": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13091": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13092": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13093": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13094": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13095": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13096": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13097": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13098": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13099": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13100": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13101": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13102": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13103": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13104": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13105": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13106": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13107": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13108": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13109": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13110": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13111": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13112": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13113": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13114": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13115": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13116": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13117": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13118": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13119": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13120": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13121": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13122": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13123": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13124": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13125": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13126": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13127": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13128": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13129": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13130": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13131": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13132": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13133": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13134": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13135": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13136": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13137": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13138": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13139": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13140": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13141": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13142": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13143": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13144": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13145": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13146": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13147": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13148": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13149": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13150": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13151": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13152": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13153": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13154": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13155": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13156": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13157": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13158": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13159": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13160": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13161": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13162": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13163": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13164": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13165": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13166": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13167": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13188": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "13189": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14069": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14070": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14071": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14072": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14073": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14074": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14075": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14076": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14077": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14078": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14079": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14080": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14081": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14082": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14083": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14084": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "14287": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "15639": {
+      "max_count": 30,
+      "proctype": 0
+    },
+    "16241": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "16538": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "17810": {
+      "max_count": 10000,
+      "proctype": 0
+    },
+    "17811": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17812": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17815": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17816": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17817": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17818": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17819": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17820": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17821": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17822": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17823": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17824": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17825": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17826": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17827": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17828": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17829": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17830": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17831": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17832": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17833": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17834": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17835": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17836": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17837": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "17838": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "18235": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "19004": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "19148": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20045": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20046": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20047": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20048": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20049": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20050": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20051": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20052": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20053": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20054": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20055": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20056": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20058": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "20059": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "20443": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20444": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20445": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20446": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20447": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20448": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20449": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20450": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20451": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20452": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20746": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20747": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20754": {
+      "max_count": 100,
+      "proctype": 0
+    },
+    "20786": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20943": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "20944": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "21192": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21193": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21194": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21195": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21196": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21197": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21198": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21199": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21200": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21201": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21202": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "21652": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "23529": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23530": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23531": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23532": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23533": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23534": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23535": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23536": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23537": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23538": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23539": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "23540": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "26425": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26426": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26427": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26428": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26429": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26430": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26431": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26432": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26433": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26434": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26435": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26436": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26437": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "26438": {
+      "max_count": 1,
+      "proctype": 0
+    },
+    "32911": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "32912": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "32913": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "34449": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "34450": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "34451": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "34501": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "34502": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "34851": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "34852": {
+      "max_count": 999,
+      "proctype": 0
+    },
+    "36898": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "36926": {
+      "max_count": 1000,
+      "proctype": 0
+    },
+    "50644": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "50645": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "50646": {
+      "max_count": 9999,
+      "proctype": 0
+    },
+    "50647": {
+      "max_count": 9999,
+      "proctype": 0
+    }
+  }
+}

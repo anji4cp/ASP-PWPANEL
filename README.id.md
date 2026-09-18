@@ -20,6 +20,9 @@ Ubuntu.
 - Monitoring layanan inti dan kontrol map
 - Broadcast pengumuman di dalam game serta safe shutdown dengan hitung mundur
   persisten dan dapat dibatalkan; map dihentikan sebelum daemon inti
+- Pengaturan rate EXP realm (x1-x10) dan gold monster (x1/x2) dari Admin Panel
+- Pengiriman material biasa berdasarkan ID melalui mail sistem; equipment dan
+  kategori lain sengaja ditolak sampai format data itemnya teruji
 - Tautan opsional ke layanan ASP CPW yang dipasang secara terpisah
 - Backup database manual oleh admin dengan akses unduhan yang dilindungi
 
@@ -118,13 +121,31 @@ mengemas backup. Retensi default adalah 14 hari dan dapat diubah melalui
 
 Jadwal disimpan di luar proses web. Menutup browser atau me-restart PWPanel
 tidak menghilangkan hitung mundur. Nilai bawaan installer adalah provider
-`127.0.0.1:29300`, opcode provider `ChatBroadCast` `120`, dan channel `9`.
+`127.0.0.1:29300` untuk broadcast serta delivery/iWeb `127.0.0.1:29100` untuk
+rate dan mail item. Opcode provider `ChatBroadCast` adalah `120` dan channel
+yang dipakai `9`.
 Opcode `PublicChat` pemain `79` sengaja tidak dipakai karena panel tidak
 memiliki sesi pemain yang terautentikasi. Jika build server
-milik Anda berbeda, override `PW155_PROVIDER_HOST`, `PW155_PROVIDER_PORT`, atau
-`PW155_WORLD_CHAT_OPCODE` melalui systemd override untuk
+milik Anda berbeda, override `PW155_PROVIDER_HOST`, `PW155_PROVIDER_PORT`,
+`PW155_DELIVERY_HOST`, `PW155_DELIVERY_PORT`, atau `PW155_WORLD_CHAT_OPCODE`
+melalui systemd override untuk
 `pw155-game-control.service`. Uji broadcast dahulu sebelum menjadwalkan
 maintenance.
+
+## Rate EXP, Gold, dan Kirim Material
+
+Administrator dapat membuka **Rate & Item** untuk mengatur multiplier EXP dan
+gold monster pada realm aktif. Pilihan EXP yang diizinkan adalah x1, x2, x3,
+x4, x5, x6, x8, dan x10; build PW155 ini hanya menyediakan gold normal atau
+dua kali lipat.
+
+Form pengiriman menerima karakter, material ID, dan jumlah. Hanya material
+`MATERIAL_ESSENCE` dengan `proc_type=0` dari `elements.data` baseline yang
+diizinkan. Worker memeriksa hash asset server sebelum mengirim melalui mail
+sistem. Equipment, item yang tidak ada di katalog, dan jumlah di atas batas
+stack ditolak. Status `mail-accepted` berarti server menerima surat, **bukan**
+bahwa pemain sudah mengambil lampirannya. Pemain perlu membuka mailbox dan
+memeriksa tas. Permintaan memerlukan konfirmasi admin dan dicatat di audit.
 
 ## Unduhan dan payload CPW
 

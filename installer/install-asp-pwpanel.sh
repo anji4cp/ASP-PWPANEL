@@ -24,7 +24,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends python3 mariadb-server mariadb-client openssl ca-certificates curl
 
-for required in app.py sync_characters.py gm_position.py role_operations.py monitor_services.py map_control_worker.py backup_control_worker.py game_control_worker.py pw155-backup-db.sh index.html login.html panel.html admin.html ranking.html news.html launcher-news.html guide.html downloads.html patch_manager.html static/style.css static/app.js; do
+for required in app.py sync_characters.py gm_position.py role_operations.py monitor_services.py map_control_worker.py backup_control_worker.py game_control_worker.py material_catalog.json pw155-backup-db.sh index.html login.html panel.html admin.html ranking.html news.html launcher-news.html guide.html downloads.html patch_manager.html static/style.css static/app.js; do
   if [[ ! -f "$source_dir/$required" ]]; then
     echo "File sumber tidak lengkap: $required" >&2
     exit 1
@@ -82,6 +82,7 @@ install -o root -g root -m 0755 "$source_dir/monitor_services.py" "$install_dir/
 install -o root -g root -m 0755 "$source_dir/map_control_worker.py" "$install_dir/map_control_worker.py"
 install -o root -g root -m 0755 "$source_dir/backup_control_worker.py" "$install_dir/backup_control_worker.py"
 install -o root -g root -m 0755 "$source_dir/game_control_worker.py" "$install_dir/game_control_worker.py"
+install -o root -g root -m 0644 "$source_dir/material_catalog.json" "$install_dir/material_catalog.json"
 install -o root -g root -m 0750 "$source_dir/pw155-backup-db.sh" /srv/pw155/tools/pw155-backup-db.sh
 install -o root -g root -m 0644 "$source_dir/index.html" "$install_dir/index.html"
 install -o root -g root -m 0644 "$source_dir/login.html" "$install_dir/login.html"
@@ -636,7 +637,7 @@ UNIT
 
 cat > /etc/systemd/system/pw155-game-control.service <<'UNIT'
 [Unit]
-Description=PW155 in-game broadcast and persistent safe shutdown worker
+Description=PW155 in-game rates, item delivery, broadcast and safe shutdown worker
 After=network.target
 
 [Service]
@@ -648,6 +649,8 @@ Environment=PW155_GAME_CONTROL_DIR=/var/lib/pw155-game-control
 Environment=PW155_SERVICE_SCRIPT=/srv/pw155/tools/pw155-service.sh
 Environment=PW155_PROVIDER_HOST=127.0.0.1
 Environment=PW155_PROVIDER_PORT=29300
+Environment=PW155_DELIVERY_HOST=127.0.0.1
+Environment=PW155_DELIVERY_PORT=29100
 Environment=PW155_WORLD_CHAT_OPCODE=120
 ExecStart=/usr/bin/python3 /opt/pw155-web/game_control_worker.py run
 Restart=on-failure

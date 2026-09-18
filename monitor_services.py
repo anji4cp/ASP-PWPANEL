@@ -27,7 +27,7 @@ GAME_SERVICES = (
 )
 SYSTEMD_SERVICES = (
     ("pw155-web.service", "Web Portal"),
-    ("pw155-game-control.service", "Broadcast & Safe Shutdown"),
+    ("pw155-game-control.service", "Rate, Item & Safe Shutdown"),
     ("pw155-character-sync.timer", "Sinkronisasi Karakter"),
     ("pw155-db-backup.timer", "Backup Database"),
     ("pw155-host-export.timer", "Export ke Host"),

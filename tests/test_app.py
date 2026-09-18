@@ -226,6 +226,59 @@ class ValidationTests(unittest.TestCase):
             self.assertEqual("Event starts soon", request["message"])
             self.assertNotIn("gm_role_id", request)
 
+    def test_rate_and_material_allowed_but_equipment_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "requests").mkdir()
+            (root / "status.json").write_text(
+                '{"busy":false,"scheduled":null,"rates":{"exp":1,"gold":1}}',
+                encoding="utf-8")
+            with patch.object(app, "GAME_CONTROL_DIR", root):
+                rates = app.queue_game_action(
+                    (1024, "admin"), "set-rates", "127.0.0.1",
+                    exp_multiplier=5, gold_multiplier=2,
+                )
+                self.assertEqual(5, rates["exp_multiplier"])
+                list((root / "requests").glob("*.json"))[0].unlink()
+                item = app.queue_game_action(
+                    (1024, "admin"), "send-item", "127.0.0.1",
+                    role_id=33, item_id=21652, count=1,
+                )
+                self.assertEqual(21652, item["item_id"])
+                list((root / "requests").glob("*.json"))[0].unlink()
+                with self.assertRaisesRegex(ValueError, "bukan material"):
+                    app.queue_game_action(
+                        (1024, "admin"), "send-item", "127.0.0.1",
+                        role_id=33, item_id=11212, count=1,
+                    )
+                self.assertEqual([], list((root / "requests").glob("*.json")))
+
+    def test_rate_and_item_forms_render_character_choices(self):
+        game_control = {
+            "busy": False, "updated_at": "now", "error": None,
+            "scheduled": None, "last_action": None,
+            "rates": {"exp": 5, "gold": 2},
+        }
+        body, _ = app.render_admin(
+            (1024, "admin"), [], (0, 0, 0), [], {"services": [], "events": []}, [],
+            game_control=game_control,
+            characters=[{"role_id": 33, "name": "Hero", "username": "player01"}],
+        )
+        self.assertIn('action="/admin/game/rates"', body)
+        self.assertIn("MATERIAL_ESSENCE, proc_type 0", body)
+        self.assertIn('action="/admin/game/item"', body)
+        self.assertIn("Hero · player01 · #33", body)
+        self.assertIn('value="5" selected', body)
+        self.assertNotIn("{{", body)
+
+    def test_rate_and_item_post_routes_are_allowlisted(self):
+        source = APP_PATH.read_text(encoding="utf-8")
+        post_allowlist = source[
+            source.index("def do_POST(self):"):source.index("fields = self.read_form()")
+        ]
+        self.assertIn('"/admin/game/rates"', post_allowlist)
+        self.assertIn('"/admin/game/item"', post_allowlist)
+
     def test_game_control_template_renders_countdown_and_cancel(self):
         game_control = {
             "busy": False, "updated_at": "now", "error": None,
