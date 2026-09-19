@@ -20,6 +20,7 @@
         <a href="#server-control"><span class="nav-icon">◈</span>Server &amp; Map</a>
         <a href="#game-announcements"><span class="nav-icon">◌</span>Broadcast &amp; Shutdown</a>
         <a href="#game-rates-items"><span class="nav-icon">✦</span>Rate &amp; Item</a>
+        <a href="#online-display"><span class="nav-icon">◉</span>Pemain Online</a>
         <a href="#services"><span class="nav-icon">●</span>Service Monitor</a>
         <span class="admin-nav-label">Management</span>
         <a href="#accounts"><span class="nav-icon">♙</span>Account &amp; GM</a>
@@ -94,6 +95,11 @@
             <form method="post" action="/admin/game/item" class="game-operation-form"><input type="hidden" name="csrf" value="{{CSRF}}"><div><span class="section-kicker">MATERIAL DELIVERY</span><h3>Kirim Material berdasarkan ID</h3><p>Hanya material biasa (MATERIAL_ESSENCE, proc_type 0) dari baseline server yang didukung. Weapon, equipment, dan kategori lain ditolak.</p></div><label>Karakter<select name="role_id" required>{{ADMIN_CHARACTER_OPTIONS}}</select></label><div class="form-row"><label>Material ID<input type="number" name="item_id" min="1" max="2147483647" step="1" placeholder="contoh: 21652" required></label><label>Jumlah satu stack<input type="number" name="count" min="1" max="9999" step="1" value="1" required></label></div><label class="check-label"><input type="checkbox" name="confirm" value="yes" required>Saya akan memeriksa mailbox dan tas karakter setelah mengirim.</label><button type="submit">Kirim Material</button><small>Jumlah tidak boleh melebihi batas stack material. Status “surat diterima” belum berarti lampiran sudah diambil.</small></form>
           </div>
           <p class="admin-note">Perubahan rate dan permintaan material dicatat di Audit Log. Hasil worker ditampilkan pada Aksi Terakhir di bagian Broadcast &amp; Safe Shutdown.</p>
+        </section>
+
+        <section class="admin-card" id="online-display">
+          <div class="admin-card-header"><div><span class="section-kicker">TAMPILAN PUBLIK</span><h2>Jumlah Pemain Online</h2><p>Angka di halaman utama = akun terhubung + tambahan dummy. Saat server offline, halaman utama menampilkan 0.</p></div><span class="admin-status-summary"><strong>{{PLAYERS_DISPLAYED}} saat online</strong><small>{{PLAYERS_REAL}} asli + {{PLAYERS_DUMMY}} dummy</small></span></div>
+          <form method="post" action="/admin/online-display" class="online-display-form"><input type="hidden" name="csrf" value="{{CSRF}}"><label>Tambahan dummy<input type="number" name="dummy_online" min="0" max="100000" step="1" value="{{PLAYERS_DUMMY}}" required></label><button type="submit">Simpan Jumlah</button><small>Nilai 0 menampilkan jumlah pemain asli saja. Perubahan tercatat di Audit Log.</small></form>
         </section>
 
         <section class="admin-card" id="services">

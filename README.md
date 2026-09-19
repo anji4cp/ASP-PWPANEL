@@ -23,6 +23,8 @@ MariaDB, and is designed to run beside the existing PW155 services on Ubuntu.
   ordinary materials from the verified baseline catalog
 - Optional link to an independently installed ASP CPW service
 - Admin-triggered database backups with protected download access
+- Public Online/Offline status and online-player count, with an admin-controlled
+  dummy offset kept separate from the real connected-account count
 
 ## What is not included
 
@@ -86,6 +88,11 @@ keep all worker/control directories outside the web root.
 Run **Install / Update** once for a new panel and again after pulling a newer
 ASP PWPanel version. The application never stores SSH passwords. ASP CPW is a
 separate optional product; this installer never installs or updates it.
+
+After updating, open **Admin Panel → Pemain Online** to set the dummy offset
+(0–100000). The public page displays connected accounts plus the offset while
+the server is online, or zero while it is offline. The admin view keeps the
+real and dummy counts separate.
 
 ## Database backup from Admin Panel
 

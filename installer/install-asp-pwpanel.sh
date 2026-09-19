@@ -139,6 +139,12 @@ CREATE TABLE IF NOT EXISTS pw_portal.admins (
   granted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (account_id)
 ) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS pw_portal.realm_settings (
+  id TINYINT UNSIGNED NOT NULL,
+  dummy_online INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
+INSERT IGNORE INTO pw_portal.realm_settings(id,dummy_online) VALUES (1,0);
 CREATE TABLE IF NOT EXISTS pw_portal.audit_log (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -207,7 +213,7 @@ INSERT IGNORE INTO pw_portal.news(source_key,title,body,status,author_id,author_
   ('seed-id-stage-one','Bahasa Indonesia tahap pertama','Antarmuka umum telah diterjemahkan dan diperiksa di client. Nama skill dan item dipertahankan dalam bahasa Inggris agar tetap mudah dikenali pemain.','published',1024,'PW155 Team','2026-08-31 00:00:00'),
   ('seed-panels-active','Player & Admin Panel aktif','Portal sekarang mendukung registrasi, profil karakter, perubahan sandi, pengelolaan GM, monitoring, ranking publik, serta pusat download.','published',1024,'PW155 Team','2026-08-31 00:00:00');
 GRANT SELECT (id, name, creatime) ON pw.users TO 'pw_web'@'localhost';
-GRANT SELECT (uid, lastlogin) ON pw.point TO 'pw_web'@'localhost';
+GRANT SELECT (uid, lastlogin, zoneid) ON pw.point TO 'pw_web'@'localhost';
 GRANT SELECT (userid, zoneid, rid) ON pw.auth TO 'pw_web'@'localhost';
 GRANT SELECT (userid, zoneid, sn, cash, status, creatime) ON pw.usecashnow TO 'pw_web'@'localhost';
 GRANT SELECT (account_id, role_id, role_name, role_level, role_occupation, role_gender, faction_name)
@@ -216,6 +222,8 @@ GRANT EXECUTE ON PROCEDURE pw.adduser TO 'pw_web'@'localhost';
 GRANT SELECT, INSERT ON pw_portal.accounts TO 'pw_web'@'localhost';
 GRANT UPDATE (username, password_hash, last_login_at) ON pw_portal.accounts TO 'pw_web'@'localhost';
 GRANT SELECT ON pw_portal.admins TO 'pw_web'@'localhost';
+GRANT SELECT ON pw_portal.realm_settings TO 'pw_web'@'localhost';
+GRANT UPDATE (dummy_online) ON pw_portal.realm_settings TO 'pw_web'@'localhost';
 GRANT SELECT ON pw_portal.audit_log TO 'pw_web'@'localhost';
 GRANT SELECT ON pw_portal.news TO 'pw_web'@'localhost';
 GRANT SELECT, INSERT, UPDATE ON pw_portal.coin_orders TO 'pw_web'@'localhost';

@@ -85,6 +85,47 @@ class ValidationTests(unittest.TestCase):
         self.assertIn("PAY-7", body)
         self.assertIn('action="/admin/coin/action"', body)
 
+    def test_public_status_hides_service_details_and_adds_dummy(self):
+        with patch.object(app, "tcp_available", return_value=True), \
+                patch.object(app, "online_player_counts", return_value={
+                    "real": 2, "dummy": 5, "displayed": 7,
+                }):
+            status = app.server_status()
+        self.assertEqual(status["players_online"], 7)
+        self.assertTrue(status["online"])
+        self.assertNotIn("services", status)
+        with patch.object(app, "tcp_available", return_value=False), \
+                patch.object(app, "online_player_counts") as counts:
+            self.assertEqual(app.server_status()["players_online"], 0)
+            counts.assert_not_called()
+
+    def test_online_counts_and_dummy_validation(self):
+        with patch.object(app, "run_db", return_value=["3\t12"]) as query:
+            self.assertEqual(app.online_player_counts(), {
+                "real": 3, "dummy": 12, "displayed": 15,
+            })
+            self.assertIn("COUNT(DISTINCT uid)", query.call_args.args[0])
+        with patch.object(app, "run_db") as query:
+            for invalid in ("", "-1", "100001", "abc"):
+                with self.assertRaises(ValueError):
+                    app.set_dummy_online((1024, "admin"), invalid, "127.0.0.1")
+            query.assert_not_called()
+            app.set_dummy_online((1024, "admin"), "8", "127.0.0.1")
+            self.assertIn("dummy_online=8", query.call_args.args[0])
+            self.assertIn("realm.dummy_online", query.call_args.args[0])
+
+    def test_home_and_admin_online_widgets(self):
+        home, _ = app.render_home()
+        self.assertIn('id="server-status"', home)
+        self.assertIn('id="players-online"', home)
+        self.assertNotIn("<span>Auth</span>", home)
+        admin, _ = app.render_admin((1024, "admin"), [], (0, 0, 0), [],
+                                    {"services": [], "events": []}, [],
+                                    player_counts={"real": 2, "dummy": 5, "displayed": 7})
+        self.assertIn('action="/admin/online-display"', admin)
+        self.assertIn("2 asli + 5 dummy", admin)
+        self.assertNotIn("{{PLAYERS_", admin)
+
     def test_admin_authorization_uses_explicit_allowlist(self):
         with patch.object(app, "run_db", return_value=["1"]) as query:
             self.assertTrue(app.is_panel_admin(1024))

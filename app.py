@@ -53,6 +53,7 @@ SERVER_PORTS = {
     "Database": 3306,
     "GameDB": 29400,
 }
+MAX_DUMMY_ONLINE = 100000
 
 
 class RateLimiter:
@@ -369,6 +370,30 @@ def account_is_online(account_id):
         f"uid={int(account_id)} AND COALESCE(zoneid,0)<>0;"
     )
     return bool(rows and int(rows[0]))
+
+
+def online_player_counts():
+    rows = run_db(
+        "SELECT (SELECT COUNT(DISTINCT uid) FROM pw.point WHERE COALESCE(zoneid,0)<>0), "
+        "(SELECT dummy_online FROM pw_portal.realm_settings WHERE id=1);"
+    )
+    real, dummy = (int(value) for value in rows[0].split("\t", 1))
+    return {"real": real, "dummy": dummy, "displayed": real + dummy}
+
+
+def set_dummy_online(account, value, client_ip):
+    if not str(value).isdigit() or not 0 <= int(value) <= MAX_DUMMY_ONLINE:
+        raise ValueError(f"Jumlah dummy harus 0–{MAX_DUMMY_ONLINE}.")
+    count = int(value)
+    run_db(
+        "START TRANSACTION; "
+        f"UPDATE pw_portal.realm_settings SET dummy_online={count} WHERE id=1; "
+        "INSERT INTO pw_portal.audit_log(actor_id,actor_username,action_name,target_id,"
+        "target_username,details,client_ip) VALUES "
+        f"({int(account[0])},{sql_literal(account[1])},'realm.dummy_online',0,'realm',"
+        f"{sql_literal(f'mengatur tambahan pemain online menjadi {count}')},"
+        f"{sql_literal(client_ip[:45])}); COMMIT;"
+    )
 
 
 def owned_character(account_id, role_id):
@@ -1012,9 +1037,10 @@ def tcp_available(port):
 
 def server_status():
     services = {name: tcp_available(port) for name, port in SERVER_PORTS.items()}
+    online = all(services.values())
     return {
-        "online": all(services.values()),
-        "services": services,
+        "online": online,
+        "players_online": online_player_counts()["displayed"] if online else 0,
         "checked_at": int(time.time()),
     }
 
@@ -1329,9 +1355,11 @@ def render_panel(profile, characters, message="", level="", coin_orders=None):
 
 def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
                  editor=None, boutique_queue=None, maps=None, search="", message="", level="",
-                 backups=None, coin_orders=None, game_control=None, characters=None):
+                 backups=None, coin_orders=None, game_control=None, characters=None,
+                 player_counts=None):
     template = (BASE_DIR / "admin.html").read_text(encoding="utf-8")
     token = new_csrf_token()
+    player_counts = player_counts or {"real": 0, "dummy": 0, "displayed": 0}
     monitor = support_monitor_state(monitor)
     account_rows = []
     for item in accounts:
@@ -1584,6 +1612,9 @@ def render_admin(account, accounts, totals, audit_rows, monitor, news_items,
         "{{TOTAL_ACCOUNTS}}": str(totals[0]),
         "{{TOTAL_CHARACTERS}}": str(totals[1]),
         "{{TOTAL_GM}}": str(totals[2]),
+        "{{PLAYERS_REAL}}": str(player_counts["real"]),
+        "{{PLAYERS_DUMMY}}": str(player_counts["dummy"]),
+        "{{PLAYERS_DISPLAYED}}": str(player_counts["displayed"]),
         "{{ACCOUNT_ROWS}}": "".join(account_rows),
         "{{AUDIT_ROWS}}": "".join(audit_html),
         "{{MONITOR_ONLINE}}": str(monitor["online"]),
@@ -1785,6 +1816,7 @@ class PWHandler(BaseHTTPRequestHandler):
             game_control = game_control_state()
             coin_orders = pending_coin_orders()
             characters = admin_characters()
+            player_counts = online_player_counts()
         except (RuntimeError, subprocess.TimeoutExpired, ValueError):
             self.send_error(HTTPStatus.SERVICE_UNAVAILABLE,
                             "Admin panel sedang tidak tersedia")
@@ -1793,7 +1825,7 @@ class PWHandler(BaseHTTPRequestHandler):
                                    news_items, editor, boutique_queue, maps,
                                    search, message, level, backups=backups,
                                    coin_orders=coin_orders, game_control=game_control,
-                                   characters=characters)
+                                   characters=characters, player_counts=player_counts)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
                             "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
@@ -1841,7 +1873,12 @@ class PWHandler(BaseHTTPRequestHandler):
                             })
             return
         if path == "/api/status":
-            body = json.dumps(server_status(), separators=(",", ":")).encode()
+            try:
+                status = server_status()
+            except (RuntimeError, subprocess.TimeoutExpired, ValueError, IndexError):
+                self.send_error(HTTPStatus.SERVICE_UNAVAILABLE, "Status realm tidak tersedia")
+                return
+            body = json.dumps(status, separators=(",", ":")).encode()
             self.send_bytes(HTTPStatus.OK, body, "application/json; charset=utf-8")
             return
         if path == "/api/downloads":
@@ -1936,7 +1973,8 @@ class PWHandler(BaseHTTPRequestHandler):
                              "/admin/boutique/grant", "/admin/coin/action",
                              "/admin/maps/action", "/admin/patch/action",
                              "/admin/backups/create", "/admin/game/action",
-                             "/admin/game/rates", "/admin/game/item"):
+                             "/admin/game/rates", "/admin/game/item",
+                             "/admin/online-display"):
             self.send_error(HTTPStatus.NOT_FOUND)
             return
         fields = self.read_form()
@@ -1978,6 +2016,8 @@ class PWHandler(BaseHTTPRequestHandler):
             self.handle_admin_game_rates(fields)
         elif self.path == "/admin/game/item":
             self.handle_admin_game_item(fields)
+        elif self.path == "/admin/online-display":
+            self.handle_admin_online_display(fields)
         else:
             self.handle_change_password(fields)
 
@@ -2292,6 +2332,19 @@ class PWHandler(BaseHTTPRequestHandler):
                      "masuk antrean."),
             level="success",
         )
+
+    def handle_admin_online_display(self, fields):
+        account = self.require_admin()
+        if not account:
+            return
+        try:
+            set_dummy_online(account, fields.get("dummy_online", [""])[0], self.client_key())
+        except (RuntimeError, subprocess.TimeoutExpired, ValueError) as error:
+            self.send_admin(account, message=f"Pengaturan pemain online ditolak: {error}",
+                            level="error")
+            return
+        self.send_admin(account, message="Tambahan pemain online berhasil disimpan.",
+                        level="success")
 
     def handle_admin_game_item(self, fields):
         account = self.require_admin()

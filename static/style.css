@@ -72,6 +72,10 @@ h2 { font-size: clamp(36px, 5vw, 58px); line-height: 1.1; }
 .service.online b { color: var(--jade); }
 .service.offline { border-color: #e07972; }
 .service.offline b { color: #e07972; }
+.online-display-form { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; }
+.online-display-form label { display: grid; gap: 8px; min-width: 190px; }
+.online-display-form button { width: auto; }
+.online-display-form small { width: 100%; color: var(--muted); }
 
 .register { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; padding: 110px 0 130px; }
 .register-copy p, .register-copy li { color: var(--muted); }

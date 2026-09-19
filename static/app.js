@@ -7,28 +7,29 @@ async function refreshStatus() {
     const data = await response.json();
     realm.classList.toggle('online', data.online);
     realm.classList.toggle('offline', !data.online);
-    realm.querySelector('span:last-child').textContent = data.online ? 'Server online' : 'Server belum lengkap';
+    realm.querySelector('span:last-child').textContent = data.online ? 'Server online' : 'Server offline';
     document.querySelectorAll('.status-text').forEach((element) => {
-      element.textContent = data.online ? 'Online' : 'Maintenance';
+      element.textContent = data.online ? 'Online' : 'Offline';
       element.classList.toggle('online-text', data.online);
     });
     if (!grid) return;
-    grid.replaceChildren(...Object.entries(data.services).map(([name, online]) => {
-      const item = document.createElement('div');
-      item.className = `service ${online ? 'online' : 'offline'}`;
-      const label = document.createElement('span');
-      label.textContent = name;
-      const value = document.createElement('b');
-      value.textContent = online ? 'Online' : 'Offline';
-      item.append(label, value);
-      return item;
-    }));
+    const status = grid.querySelector('#server-status');
+    const players = grid.querySelector('#players-online');
+    status.classList.toggle('online', data.online);
+    status.classList.toggle('offline', !data.online);
+    status.querySelector('b').textContent = data.online ? 'Online' : 'Offline';
+    players.querySelector('b').textContent = Number.isSafeInteger(data.players_online)
+      ? data.players_online.toLocaleString('id-ID') : '—';
   } catch (_) {
     realm.className = 'realm-state offline';
     realm.querySelector('span:last-child').textContent = 'Status tidak tersedia';
     document.querySelectorAll('.status-text').forEach((element) => {
       element.textContent = 'Tidak tersedia';
     });
+    if (grid) {
+      grid.querySelector('#server-status').querySelector('b').textContent = 'Tidak tersedia';
+      grid.querySelector('#players-online').querySelector('b').textContent = '—';
+    }
   }
 }
 

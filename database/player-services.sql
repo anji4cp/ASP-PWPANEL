@@ -1,5 +1,11 @@
 -- Re-runnable schema upgrade for Player Panel coin orders and safe teleport.
 CREATE DATABASE IF NOT EXISTS pw_portal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS pw_portal.realm_settings (
+  id TINYINT UNSIGNED NOT NULL,
+  dummy_online INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
+INSERT IGNORE INTO pw_portal.realm_settings(id,dummy_online) VALUES (1,0);
 CREATE TABLE IF NOT EXISTS pw_portal.coin_orders (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   account_id INT NOT NULL,
@@ -36,4 +42,7 @@ CREATE TABLE IF NOT EXISTS pw_portal.unstuck_log (
 GRANT SELECT, INSERT, UPDATE ON pw_portal.coin_orders TO 'pw_web'@'localhost';
 GRANT SELECT, INSERT ON pw_portal.unstuck_log TO 'pw_web'@'localhost';
 GRANT INSERT ON pw_portal.audit_log TO 'pw_web'@'localhost';
+GRANT SELECT (zoneid) ON pw.point TO 'pw_web'@'localhost';
+GRANT SELECT ON pw_portal.realm_settings TO 'pw_web'@'localhost';
+GRANT UPDATE (dummy_online) ON pw_portal.realm_settings TO 'pw_web'@'localhost';
 FLUSH PRIVILEGES;

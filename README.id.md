@@ -25,6 +25,8 @@ Ubuntu.
   kategori lain sengaja ditolak sampai format data itemnya teruji
 - Tautan opsional ke layanan ASP CPW yang dipasang secara terpisah
 - Backup database manual oleh admin dengan akses unduhan yang dilindungi
+- Status Online/Offline dan jumlah pemain online pada halaman utama; admin
+  dapat mengatur tambahan dummy terpisah dari jumlah akun yang benar-benar online
 
 ## Yang tidak disertakan
 
@@ -90,6 +92,11 @@ Jalankan **Install / Update** satu kali untuk panel baru dan ulangi setelah
 menarik versi ASP PWPanel yang lebih baru. Aplikasi tidak menyimpan password
 SSH. ASP CPW adalah produk opsional yang terpisah; installer ini tidak pernah
 memasang atau memperbarui ASP CPW.
+
+Setelah update, buka **Admin Panel → Pemain Online** untuk mengatur tambahan
+dummy (0–100000). Halaman utama menampilkan jumlah akun terhubung ditambah
+dummy ketika server online, atau 0 ketika offline. Admin tetap dapat melihat
+angka asli dan dummy secara terpisah.
 
 ## Backup database dari Admin Panel
 
