@@ -17,6 +17,31 @@ SPEC.loader.exec_module(app)
 
 
 class ValidationTests(unittest.TestCase):
+    def test_untrusted_peer_cannot_spoof_forwarded_address(self):
+        with patch.object(app, "TRUSTED_PROXIES", frozenset({"10.77.0.1"})):
+            self.assertEqual(
+                app.resolved_client_ip("192.168.30.50", "203.0.113.9"),
+                "192.168.30.50",
+            )
+
+    def test_trusted_proxy_supplies_single_valid_client_address(self):
+        with patch.object(app, "TRUSTED_PROXIES", frozenset({"10.77.0.1"})):
+            self.assertEqual(
+                app.resolved_client_ip("10.77.0.1", "203.0.113.9"),
+                "203.0.113.9",
+            )
+            self.assertEqual(
+                app.resolved_client_ip("10.77.0.1", "198.51.100.2, 203.0.113.9"),
+                "10.77.0.1",
+            )
+
+    def test_secure_cookie_flag_is_configurable(self):
+        with patch.object(app, "SECURE_COOKIES", True):
+            cookie = app.http_cookie("pwsession", "abc", max_age=60)
+        self.assertIn("Secure", cookie)
+        self.assertIn("HttpOnly", cookie)
+        self.assertIn("SameSite=Strict", cookie)
+
     def test_valid_registration(self):
         self.assertIsNone(app.validate_registration("player_01", "secret-123", "secret-123"))
 
@@ -517,6 +542,14 @@ class ValidationTests(unittest.TestCase):
         for name in ("guide.html",):
             body = (app.BASE_DIR / name).read_text(encoding="utf-8")
             self.assertNotIn("{{", body)
+
+    def test_public_guide_matches_english_client_and_public_gateway(self):
+        guide = (app.BASE_DIR / "guide.html").read_text(encoding="utf-8")
+        downloads = (app.BASE_DIR / "downloads.html").read_text(encoding="utf-8")
+        self.assertIn("game.pwku.cloud:29000", guide)
+        self.assertIn("bahasa Inggris", guide)
+        self.assertNotIn("Indonesia Connection Pack", guide)
+        self.assertIn("antarmuka bahasa Inggris", downloads)
 
     def test_news_template_escapes_database_content(self):
         body = app.render_news([{

@@ -77,8 +77,11 @@ desktop khusus untuk item, NPC, monster, spawn, merchant, dan recipe.
 
 Untuk produksi, jalankan panel sebagai service `systemd` tanpa hak root dan
 letakkan di belakang reverse proxy HTTPS. Jangan membuka HTTP server bawaan
-Python langsung ke internet. Batasi izin file database dan simpan semua folder
-worker/control di luar web root.
+Python langsung ke internet. Portal publik PWKU menggunakan `pwku.cloud`, panel
+akun menggunakan `panel.pwku.cloud`, dan gateway game menggunakan
+`game.pwku.cloud:29000`. Client yang didukung saat ini adalah PW 1.5.5 EN;
+connection pack belum merupakan terjemahan Indonesia lengkap. Batasi izin file
+database dan simpan semua folder worker/control di luar web root.
 
 ## Instalasi dan update
 
@@ -92,6 +95,13 @@ Jalankan **Install / Update** satu kali untuk panel baru dan ulangi setelah
 menarik versi ASP PWPanel yang lebih baru. Aplikasi tidak menyimpan password
 SSH. ASP CPW adalah produk opsional yang terpisah; installer ini tidak pernah
 memasang atau memperbarui ASP CPW.
+
+Contoh reverse proxy portal publik tersedia di
+[`deploy/nginx-pwku-public.conf.example`](deploy/nginx-pwku-public.conf.example).
+Nginx wajib mengganti `X-Forwarded-For` dengan `$remote_addr`, bukan meneruskan
+nilai dari pengunjung. Installer mempercayai header tersebut hanya ketika
+koneksi backend berasal dari peer WireGuard `10.77.0.1`, dan cookie autentikasi
+ditandai `Secure` untuk penggunaan HTTPS.
 
 Setelah update, buka **Admin Panel → Pemain Online** untuk mengatur tambahan
 dummy (0–100000). Halaman utama menampilkan jumlah akun terhubung ditambah

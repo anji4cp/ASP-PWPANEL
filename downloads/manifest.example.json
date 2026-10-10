@@ -2,13 +2,13 @@
   "downloads": [
     {
       "id": "connection-pack",
-      "title": "Your PW 1.5.5 Connection Pack",
+      "title": "PWKU Connection Pack untuk Client EN",
       "version": "1.0.0",
       "filename": "connection-pack.zip",
       "bytes": 0,
       "sha256": "REPLACE_WITH_SHA256",
       "available": false,
-      "description": "Provide your own legally distributable package and set available to true."
+      "description": "Paket koneksi untuk client PW 1.5.5 EN. Paket ini tidak mengubah seluruh antarmuka client menjadi bahasa Indonesia."
     }
   ]
 }

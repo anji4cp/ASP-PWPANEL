@@ -77,6 +77,14 @@ HTTPS reverse proxy. Do not expose Python's built-in HTTP server directly to
 the public internet. Restrict the database file to its service account and
 keep all worker/control directories outside the web root.
 
+The current public layout uses `pwku.cloud` for the player portal,
+`panel.pwku.cloud` for account access, and `game.pwku.cloud:29000` for the game
+gateway. The supported client is currently PW 1.5.5 EN; the connection pack is
+not a complete Indonesian translation. An HTTP bootstrap configuration is
+available at `deploy/nginx-pwku-public.conf.example`. It overwrites
+`X-Forwarded-For` with Nginx's `$remote_addr`; the application trusts that
+header only from the WireGuard peer `10.77.0.1`.
+
 ## Installation and updates
 
 1. Start the Ubuntu VM/VPS and verify SSH access.

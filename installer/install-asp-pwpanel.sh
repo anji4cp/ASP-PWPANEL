@@ -209,9 +209,17 @@ ALTER TABLE pw_portal.coin_orders
 INSERT IGNORE INTO pw_portal.admins(account_id)
 SELECT ID FROM pw.users WHERE ID=1024 AND LOWER(name)='admin';
 INSERT IGNORE INTO pw_portal.news(source_key,title,body,status,author_id,author_username,published_at) VALUES
-  ('seed-realm-stable','Realm lokal stabil','Seluruh daemon inti, map utama, dan Celestial Vale sudah aktif. Login, pembuatan karakter, serta masuk ke dunia telah diverifikasi.','published',1024,'PW155 Team','2026-08-31 00:00:00'),
-  ('seed-id-stage-one','Bahasa Indonesia tahap pertama','Antarmuka umum telah diterjemahkan dan diperiksa di client. Nama skill dan item dipertahankan dalam bahasa Inggris agar tetap mudah dikenali pemain.','published',1024,'PW155 Team','2026-08-31 00:00:00'),
+  ('seed-realm-stable','Realm PWKU stabil','Gateway publik, map utama, dan Celestial Vale sudah aktif. Login, pembuatan karakter, serta masuk ke dunia telah diverifikasi.','published',1024,'PW155 Team','2026-08-31 00:00:00'),
+  ('seed-id-stage-one','Client Perfect World 1.5.5 EN','Realm PWKU saat ini menggunakan client bahasa Inggris. Connection pack mengatur koneksi dan updater, tetapi belum menyediakan terjemahan Indonesia lengkap.','published',1024,'PW155 Team','2026-08-31 00:00:00'),
   ('seed-panels-active','Player & Admin Panel aktif','Portal sekarang mendukung registrasi, profil karakter, perubahan sandi, pengelolaan GM, monitoring, ranking publik, serta pusat download.','published',1024,'PW155 Team','2026-08-31 00:00:00');
+UPDATE pw_portal.news SET
+  title='Realm PWKU stabil',
+  body='Gateway publik, map utama, dan Celestial Vale sudah aktif. Login, pembuatan karakter, serta masuk ke dunia telah diverifikasi.'
+WHERE source_key='seed-realm-stable';
+UPDATE pw_portal.news SET
+  title='Client Perfect World 1.5.5 EN',
+  body='Realm PWKU saat ini menggunakan client bahasa Inggris. Connection pack mengatur koneksi dan updater, tetapi belum menyediakan terjemahan Indonesia lengkap.'
+WHERE source_key='seed-id-stage-one';
 GRANT SELECT (id, name, creatime) ON pw.users TO 'pw_web'@'localhost';
 GRANT SELECT (uid, lastlogin, zoneid) ON pw.point TO 'pw_web'@'localhost';
 GRANT SELECT (userid, zoneid, rid) ON pw.auth TO 'pw_web'@'localhost';
@@ -443,12 +451,14 @@ grep -q '^PW155_SAFE_WORLD_TAG=' "$config_dir/web.env" || printf 'PW155_SAFE_WOR
 grep -q '^PW155_SAFE_X=' "$config_dir/web.env" || printf 'PW155_SAFE_X=1286.669\n' >> "$config_dir/web.env"
 grep -q '^PW155_SAFE_Y=' "$config_dir/web.env" || printf 'PW155_SAFE_Y=219.375\n' >> "$config_dir/web.env"
 grep -q '^PW155_SAFE_Z=' "$config_dir/web.env" || printf 'PW155_SAFE_Z=1044.339\n' >> "$config_dir/web.env"
+grep -q '^PW155_TRUSTED_PROXIES=' "$config_dir/web.env" || printf 'PW155_TRUSTED_PROXIES=10.77.0.1\n' >> "$config_dir/web.env"
+grep -q '^PW155_WEB_SECURE_COOKIES=' "$config_dir/web.env" || printf 'PW155_WEB_SECURE_COOKIES=true\n' >> "$config_dir/web.env"
 chown root:pwweb "$config_dir/web.env"
 chmod 0640 "$config_dir/web.env"
 
 cat > "$service_file" <<'UNIT'
 [Unit]
-Description=PW155 local player portal
+Description=PWKU public player portal
 After=network.target mariadb.service
 Requires=mariadb.service
 

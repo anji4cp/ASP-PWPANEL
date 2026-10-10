@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Web lokal PW 1.5.5 tanpa dependency pihak ketiga."""
+"""Portal web PW 1.5.5 tanpa dependency pihak ketiga."""
 
 import base64
 import binascii
 import hashlib
 import hmac
 import html
+import ipaddress
 import json
 import os
 import re
@@ -30,6 +31,13 @@ DB_CONFIG = os.environ.get("PW155_WEB_DB_CONFIG", "/etc/pw155-web/db.cnf")
 BIND_HOST = os.environ.get("PW155_WEB_HOST", "0.0.0.0")
 BIND_PORT = int(os.environ.get("PW155_WEB_PORT", "8080"))
 CSRF_SECRET = os.environ.get("PW155_WEB_CSRF_SECRET", "")
+TRUSTED_PROXIES = frozenset(
+    value.strip() for value in os.environ.get("PW155_TRUSTED_PROXIES", "").split(",")
+    if value.strip()
+)
+SECURE_COOKIES = os.environ.get("PW155_WEB_SECURE_COOKIES", "false").lower() in {
+    "1", "true", "yes", "on",
+}
 MONITOR_DIR = Path(os.environ.get("PW155_MONITOR_DIR", "/var/lib/pw155-monitor"))
 MAP_CONTROL_DIR = Path(os.environ.get(
     "PW155_MAP_CONTROL_DIR", "/var/lib/pw155-map-control"
@@ -87,6 +95,27 @@ ADMIN_SEARCH_RE = re.compile(r"^[A-Za-z0-9_]{0,20}$")
 DOWNLOAD_FILENAME_RE = re.compile(r"^[A-Za-z0-9_.-]+\.zip$")
 BACKUP_FILENAME_RE = re.compile(r"^PW155-database-[0-9]{8}T[0-9]{6}Z\.tar\.gz$")
 NEWS_STATUSES = {"draft", "published", "archived"}
+
+
+def resolved_client_ip(peer_ip, forwarded_for):
+    """Trust one proxy-supplied address only when the socket peer is allowlisted."""
+    if peer_ip not in TRUSTED_PROXIES or not forwarded_for or "," in forwarded_for:
+        return peer_ip
+    candidate = forwarded_for.strip()
+    try:
+        return str(ipaddress.ip_address(candidate))
+    except ValueError:
+        return peer_ip
+
+
+def http_cookie(name, value, max_age=None):
+    parts = [f"{name}={value}", "Path=/"]
+    if max_age is not None:
+        parts.append(f"Max-Age={int(max_age)}")
+    parts.extend(("HttpOnly", "SameSite=Strict"))
+    if SECURE_COOKIES:
+        parts.append("Secure")
+    return "; ".join(parts)
 
 
 def validate_registration(username, password, confirmation):
@@ -1683,7 +1712,9 @@ class PWHandler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def client_key(self):
-        return self.client_address[0]
+        return resolved_client_ip(
+            self.client_address[0], self.headers.get("X-Forwarded-For", "")
+        )
 
     def cookies(self):
         return SimpleCookie(self.headers.get("Cookie", ""))
@@ -1763,7 +1794,7 @@ class PWHandler(BaseHTTPRequestHandler):
         body, token = render_home(message, level, username)
         encoded = body.encode("utf-8")
         self.send_bytes(HTTPStatus.OK, encoded, "text/html; charset=utf-8", {
-            "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
+            "Set-Cookie": http_cookie("pwcsrf", token),
         })
 
     def redirect(self, location, cookie=None):
@@ -1776,7 +1807,7 @@ class PWHandler(BaseHTTPRequestHandler):
         body, token = render_login(message, username)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
-                            "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
+                            "Set-Cookie": http_cookie("pwcsrf", token),
                         })
 
     def send_panel(self, account, message="", level=""):
@@ -1791,12 +1822,12 @@ class PWHandler(BaseHTTPRequestHandler):
                             "Data player panel sedang tidak tersedia")
             return
         if not profile:
-            self.redirect("/login", "pwsession=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict")
+            self.redirect("/login", http_cookie("pwsession", "", max_age=0))
             return
         body, token = render_panel(profile, characters, message, level, coin_orders)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
-                        "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
+                        "Set-Cookie": http_cookie("pwcsrf", token),
                         })
 
     def send_admin(self, account, search="", message="", level="", news_id=0):
@@ -1828,7 +1859,7 @@ class PWHandler(BaseHTTPRequestHandler):
                                    characters=characters, player_counts=player_counts)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                         "text/html; charset=utf-8", {
-                            "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
+                            "Set-Cookie": http_cookie("pwcsrf", token),
                         })
 
     def send_backup_download(self, account, filename):
@@ -1869,7 +1900,7 @@ class PWHandler(BaseHTTPRequestHandler):
             body, token = render_home()
             self.send_bytes(HTTPStatus.OK, body.encode("utf-8"),
                             "text/html; charset=utf-8", {
-                                "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
+                                "Set-Cookie": http_cookie("pwcsrf", token),
                             })
             return
         if path == "/api/status":
@@ -1989,7 +2020,7 @@ class PWHandler(BaseHTTPRequestHandler):
         elif self.path == "/login":
             self.handle_login(fields)
         elif self.path == "/logout":
-            self.redirect("/", "pwsession=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict")
+            self.redirect("/", http_cookie("pwsession", "", max_age=0))
         elif self.path == "/admin/gm":
             self.handle_admin_gm(fields)
         elif self.path == "/admin/news/save":
@@ -2062,8 +2093,7 @@ class PWHandler(BaseHTTPRequestHandler):
             self.send_login("Username atau sandi tidak benar.", username)
             return
         session = make_session(*account)
-        self.redirect("/panel",
-                      f"pwsession={session}; Path=/; Max-Age={SESSION_TTL}; HttpOnly; SameSite=Strict")
+        self.redirect("/panel", http_cookie("pwsession", session, max_age=SESSION_TTL))
 
     def handle_change_password(self, fields):
         account = self.session_account()
@@ -2209,7 +2239,7 @@ class PWHandler(BaseHTTPRequestHandler):
             return
         body, token = render_patch_manager(account, cpw_control_state(), message, level)
         self.send_bytes(HTTPStatus.OK, body.encode("utf-8"), "text/html; charset=utf-8", {
-            "Set-Cookie": f"pwcsrf={token}; Path=/; SameSite=Strict; HttpOnly",
+            "Set-Cookie": http_cookie("pwcsrf", token),
         })
 
     def handle_admin_patch_action(self, fields):
