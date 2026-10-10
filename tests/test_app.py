@@ -551,6 +551,11 @@ class ValidationTests(unittest.TestCase):
         self.assertNotIn("Indonesia Connection Pack", guide)
         self.assertIn("antarmuka bahasa Inggris", downloads)
 
+    def test_authenticated_pages_link_back_to_public_portal_domain(self):
+        for name in ("login.html", "panel.html", "admin.html"):
+            body = (app.BASE_DIR / name).read_text(encoding="utf-8")
+            self.assertIn('href="https://pwku.cloud/"', body)
+
     def test_news_template_escapes_database_content(self):
         body = app.render_news([{
             "id": "1", "title": "<Realm>", "body": "Baris <script>\nKedua",
