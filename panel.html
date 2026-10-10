@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Player Panel — PW155</title>
+  <title>Panel Pemain — PWKU</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/app.js" defer></script>
 </head>
@@ -12,7 +12,7 @@
   <header class="topbar">
     <a class="brand" href="https://pwku.cloud/">
       <span class="brand-mark">PW</span>
-      <span><strong>PW155</strong><small>PLAYER PANEL</small></span>
+      <span><strong>PWKU</strong><small>PANEL PEMAIN</small></span>
     </a>
     <div class="top-actions">
       {{ADMIN_LINK}}
@@ -30,10 +30,10 @@
     {{NOTICE}}
     <section class="panel-hero">
       <div>
-        <span class="section-kicker">PLAYER PROFILE</span>
+        <span class="section-kicker">PROFIL PEMAIN</span>
         <h1>Halo, <em>{{USERNAME}}</em></h1>
       </div>
-      <div class="account-badge"><small>ACCOUNT ID</small><strong>#{{ACCOUNT_ID}}</strong></div>
+      <div class="account-badge"><small>NOMOR AKUN</small><strong>#{{ACCOUNT_ID}}</strong></div>
     </section>
 
     <section class="account-stats">
@@ -53,7 +53,7 @@
 
     <section class="panel-block player-service-grid">
       <div class="player-service-card coin-service">
-        <span class="section-kicker">COIN SERVICE</span>
+        <span class="section-kicker">LAYANAN COIN</span>
         <h2>Beli Coin In-Game</h2>
         <p>Pilih karakter dan paket. Pesanan masuk ke admin untuk verifikasi pembayaran sebelum coin dikirim.</p>
         <form method="post" action="/coin/order" class="service-form">
@@ -68,21 +68,21 @@
         </form>
       </div>
       <div class="player-service-card unstuck-service">
-        <span class="section-kicker">CHARACTER RECOVERY</span>
+        <span class="section-kicker">BANTUAN KARAKTER</span>
         <h2>Teleport Aman</h2>
-        <p>Tombol <strong>Teleport to Safe Point</strong> tersedia pada setiap kartu karakter. Gunakan hanya jika karakter tersangkut.</p>
-        <ul><li>Logout seluruh karakter dari game.</li><li>Karakter dipindah ke titik aman yang ditentukan server.</li><li>Cooldown 30 menit dan seluruh tindakan dicatat.</li></ul>
+        <p>Tombol <strong>Pindahkan ke Tempat Aman</strong> tersedia pada setiap kartu karakter. Gunakan hanya jika karakter tersangkut.</p>
+        <ul><li>Keluar dari game terlebih dahulu.</li><li>Karakter akan dipindahkan ke tempat yang aman.</li><li>Tunggu 30 menit sebelum menggunakan bantuan ini kembali.</li></ul>
       </div>
     </section>
 
     <section class="panel-block">
-      <div class="section-heading"><div><span class="section-kicker">TRANSACTIONS</span><h2>Riwayat Pesanan Coin</h2></div></div>
-      <div class="table-wrap"><table class="admin-table player-order-table"><thead><tr><th>Order</th><th>Karakter</th><th>Coin</th><th>Referensi</th><th>Status</th></tr></thead><tbody>{{COIN_ORDER_ROWS}}</tbody></table></div>
+      <div class="section-heading"><div><span class="section-kicker">TRANSAKSI</span><h2>Riwayat Pesanan Coin</h2></div></div>
+      <div class="table-wrap"><table class="admin-table player-order-table"><thead><tr><th>Pesanan</th><th>Karakter</th><th>Coin</th><th>Referensi</th><th>Status</th></tr></thead><tbody>{{COIN_ORDER_ROWS}}</tbody></table></div>
     </section>
 
     <section class="panel-block security-grid">
       <div>
-        <span class="section-kicker">ACCOUNT SECURITY</span>
+        <span class="section-kicker">KEAMANAN AKUN</span>
         <h2>Ganti sandi</h2>
         <p>Perubahan berlaku sekaligus untuk player panel dan login client.</p>
       </div>
@@ -104,6 +104,6 @@
       </form>
     </section>
   </main>
-  <footer><span>PW155 Player Panel</span><span>Local Development Realm</span></footer>
+  <footer><span>PWKU · Panel Pemain</span><span>Kelola petualanganmu</span></footer>
 </body>
 </html>

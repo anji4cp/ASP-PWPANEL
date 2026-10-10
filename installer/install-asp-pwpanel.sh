@@ -209,17 +209,24 @@ ALTER TABLE pw_portal.coin_orders
 INSERT IGNORE INTO pw_portal.admins(account_id)
 SELECT ID FROM pw.users WHERE ID=1024 AND LOWER(name)='admin';
 INSERT IGNORE INTO pw_portal.news(source_key,title,body,status,author_id,author_username,published_at) VALUES
-  ('seed-realm-stable','Realm PWKU stabil','Gateway publik, map utama, dan Celestial Vale sudah aktif. Login, pembuatan karakter, serta masuk ke dunia telah diverifikasi.','published',1024,'PW155 Team','2026-08-31 00:00:00'),
-  ('seed-id-stage-one','Client Perfect World 1.5.5 EN','Realm PWKU saat ini menggunakan client bahasa Inggris. Connection pack mengatur koneksi dan updater, tetapi belum menyediakan terjemahan Indonesia lengkap.','published',1024,'PW155 Team','2026-08-31 00:00:00'),
-  ('seed-panels-active','Player & Admin Panel aktif','Portal sekarang mendukung registrasi, profil karakter, perubahan sandi, pengelolaan GM, monitoring, ranking publik, serta pusat download.','published',1024,'PW155 Team','2026-08-31 00:00:00');
+  ('seed-realm-stable','PWKU siap dimainkan','Dunia PWKU telah dibuka. Buat akun, pilih karakter, dan mulai petualangan bersama pemain lainnya.','published',1024,'PWKU','2026-08-31 00:00:00'),
+  ('seed-id-stage-one','Informasi bahasa game','Game saat ini menggunakan bahasa Inggris. Panduan pemain berbahasa Indonesia tersedia di portal untuk membantu langkah awal.','published',1024,'PWKU','2026-08-31 00:00:00'),
+  ('seed-panels-active','Portal pemain tersedia','Gunakan portal untuk membuat akun, melihat karakter, membaca berita, memeriksa ranking, dan mengunduh paket PWKU.','published',1024,'PWKU','2026-08-31 00:00:00');
 UPDATE pw_portal.news SET
-  title='Realm PWKU stabil',
-  body='Gateway publik, map utama, dan Celestial Vale sudah aktif. Login, pembuatan karakter, serta masuk ke dunia telah diverifikasi.'
+  title='PWKU siap dimainkan',
+  body='Dunia PWKU telah dibuka. Buat akun, pilih karakter, dan mulai petualangan bersama pemain lainnya.',
+  author_username='PWKU'
 WHERE source_key='seed-realm-stable';
 UPDATE pw_portal.news SET
-  title='Client Perfect World 1.5.5 EN',
-  body='Realm PWKU saat ini menggunakan client bahasa Inggris. Connection pack mengatur koneksi dan updater, tetapi belum menyediakan terjemahan Indonesia lengkap.'
+  title='Informasi bahasa game',
+  body='Game saat ini menggunakan bahasa Inggris. Panduan pemain berbahasa Indonesia tersedia di portal untuk membantu langkah awal.',
+  author_username='PWKU'
 WHERE source_key='seed-id-stage-one';
+UPDATE pw_portal.news SET
+  title='Portal pemain tersedia',
+  body='Gunakan portal untuk membuat akun, melihat karakter, membaca berita, memeriksa ranking, dan mengunduh paket PWKU.',
+  author_username='PWKU'
+WHERE source_key='seed-panels-active';
 GRANT SELECT (id, name, creatime) ON pw.users TO 'pw_web'@'localhost';
 GRANT SELECT (uid, lastlogin, zoneid) ON pw.point TO 'pw_web'@'localhost';
 GRANT SELECT (userid, zoneid, rid) ON pw.auth TO 'pw_web'@'localhost';

@@ -73,7 +73,7 @@ class ValidationTests(unittest.TestCase):
         }
         body, token = app.render_panel(profile, [])
         self.assertIn("Halo, <em>player_01</em>", body)
-        self.assertIn("Cache karakter belum tersedia", body)
+        self.assertIn("Belum ada karakter", body)
         self.assertNotIn("{{", body)
         self.assertTrue(app.valid_csrf_token(token))
 
@@ -462,7 +462,7 @@ class ValidationTests(unittest.TestCase):
         body = app.render_downloads(manifest)
         self.assertIn("&lt;Unsafe&gt;", body)
         self.assertIn("1.50 MB", body)
-        self.assertIn("A&amp;B", body)
+        self.assertNotIn("A&amp;B", body)
         self.assertNotIn("<script>", body)
         self.assertNotIn("{{", body)
 
@@ -543,13 +543,25 @@ class ValidationTests(unittest.TestCase):
             body = (app.BASE_DIR / name).read_text(encoding="utf-8")
             self.assertNotIn("{{", body)
 
-    def test_public_guide_matches_english_client_and_public_gateway(self):
+    def test_public_guide_matches_english_client_without_internal_codes(self):
         guide = (app.BASE_DIR / "guide.html").read_text(encoding="utf-8")
         downloads = (app.BASE_DIR / "downloads.html").read_text(encoding="utf-8")
-        self.assertIn("game.pwku.cloud:29000", guide)
         self.assertIn("bahasa Inggris", guide)
-        self.assertNotIn("Indonesia Connection Pack", guide)
         self.assertIn("antarmuka bahasa Inggris", downloads)
+        self.assertNotIn("is61", guide)
+        self.assertNotIn(":29000", guide)
+
+    def test_player_pages_hide_development_language_and_internal_codes(self):
+        forbidden = (
+            "development", "pengembangan", "local realm", "gamedbd",
+            "cache read-only", "is61", ":29000", "hash modern",
+        )
+        for name in (
+                "index.html", "news.html", "guide.html", "downloads.html",
+                "ranking.html", "login.html", "panel.html"):
+            body = (app.BASE_DIR / name).read_text(encoding="utf-8").lower()
+            for term in forbidden:
+                self.assertNotIn(term, body, f"{name} still contains {term}")
 
     def test_authenticated_pages_link_back_to_public_portal_domain(self):
         for name in ("login.html", "panel.html", "admin.html"):

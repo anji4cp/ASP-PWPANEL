@@ -2,13 +2,13 @@
   "downloads": [
     {
       "id": "connection-pack",
-      "title": "PWKU Connection Pack untuk Client EN",
+      "title": "Paket Koneksi PWKU",
       "version": "1.0.0",
       "filename": "connection-pack.zip",
       "bytes": 0,
       "sha256": "REPLACE_WITH_SHA256",
       "available": false,
-      "description": "Paket koneksi untuk client PW 1.5.5 EN. Paket ini tidak mengubah seluruh antarmuka client menjadi bahasa Indonesia."
+      "description": "Paket yang diperlukan agar client Perfect World 1.5.5 berbahasa Inggris dapat terhubung dan menerima pembaruan PWKU."
     }
   ]
 }

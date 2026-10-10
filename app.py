@@ -1293,21 +1293,20 @@ def render_downloads(manifest=None):
         title = html.escape(str(item.get("title", "Paket")))
         version = html.escape(str(item.get("version", "-")))
         description = html.escape(str(item.get("description", "")))
-        digest = html.escape(str(item.get("sha256", "-")))
         size = format_file_size(item.get("bytes", 0))
         filename = str(item.get("filename") or "")
         available = item.get("available") is True and resolve_download(filename, manifest)
-        action = (f'<a class="download-button" href="/downloads/file/{html.escape(filename, quote=True)}">Unduh ZIP</a>'
+        action = (f'<a class="download-button" href="/downloads/file/{html.escape(filename, quote=True)}">Unduh</a>'
                   if available else '<span class="download-button disabled">Belum tersedia</span>')
         cards.append(
             f'<article class="download-card {"available" if available else "unavailable"}">'
-            f'<span class="availability">{"TERSEDIA" if available else "BELUM DIDISTRIBUSIKAN"}</span>'
+            f'<span class="availability">{"TERSEDIA" if available else "SEGERA HADIR"}</span>'
             f'<h2>{title}</h2><p>{description}</p>'
             f'<dl><div><dt>Versi</dt><dd>{version}</dd></div><div><dt>Ukuran</dt><dd>{size}</dd></div></dl>'
-            f'<small>SHA-256</small><code class="checksum">{digest}</code>{action}</article>'
+            f'{action}</article>'
         )
     if not cards:
-        cards.append('<div class="empty-state"><strong>Belum ada paket download</strong></div>')
+        cards.append('<div class="empty-state"><strong>Belum ada unduhan tersedia</strong></div>')
     return template.replace("{{DOWNLOAD_CARDS}}", "".join(cards))
 
 
@@ -1323,11 +1322,11 @@ def render_panel(profile, characters, message="", level="", coin_orders=None):
                 f'<h3>{html.escape(character["name"])}</h3>'
                 f'<p>{html.escape(character["class_name"])} · '
                 f'{html.escape(character["gender"])}</p>'
-                f'<small>Faction: {html.escape(character["faction"])}</small>'
+                f'<small>Guild: {html.escape(character["faction"])}</small>'
                 '<form method="post" action="/character/unstuck" class="character-action-form">'
                 f'<input type="hidden" name="csrf" value="{html.escape(token, quote=True)}">'
                 f'<input type="hidden" name="role_id" value="{int(character["role_id"])}">'
-                '<button type="submit" class="small-button secondary-button">Teleport to Safe Point</button>'
+                '<button type="submit" class="small-button secondary-button">Pindahkan ke Tempat Aman</button>'
                 '</form>'
                 '</article>'
             )
@@ -1335,11 +1334,10 @@ def render_panel(profile, characters, message="", level="", coin_orders=None):
         character_note = ""
     else:
         characters_html = (
-            '<div class="empty-state"><strong>Cache karakter belum tersedia</strong>'
-            '<p>Karakter game tersimpan aman di gamedbd. Adapter sinkronisasi '
-            'akan ditambahkan pada tahap berikutnya.</p></div>'
+            '<div class="empty-state"><strong>Belum ada karakter</strong>'
+            '<p>Buat karakter melalui game, lalu buka kembali halaman ini.</p></div>'
         )
-        character_note = '<span class="cache-state">Menunggu sinkronisasi</span>'
+        character_note = '<span class="cache-state">Belum ada karakter</span>'
     order_rows = []
     status_labels = {"pending": "Menunggu verifikasi", "completed": "Coin terkirim",
                      "rejected": "Ditolak", "failed": "Gagal"}
